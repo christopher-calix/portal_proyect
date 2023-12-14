@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %} Secure page {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">Secure Page</div>
+        <div class="card-body">
+            <div class="text-center"> 
+                <p>Logging in as: {{ user.get_username }}</p>
+                <p><a href="{% url 'unsecure' %}">Go To Unsecure Page</a>.</p>
+                <p><a href="{% url 'logout' %}">Logout</a>.</p>
+            </div>            
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
