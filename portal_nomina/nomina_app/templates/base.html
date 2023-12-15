@@ -4,22 +4,26 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
 
-    <!-- CSS only -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        integrity="sha384-rHyoN1iRsVXV4nD0JutelWqFqY76epiDME+P70Wo7vTV49L/6aBLlBDaB9QfNLM" crossorigin="anonymous">
-    
-        
+   
+    <!---CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <!-- JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
-        integrity="sha384-xpQNBFwA+TtSrLjHzD1tJDbVvZ9YU0piZ5ynE9JolWvHq0q5oxxuHe6+dUT49Kj4"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
-        integrity="sha384-dQROm0Pd6LxGv90Wv6Wn5eM7uxPjr3ZFbT+21t4a5yFi1Vq76x8F7Hux4jEU5GfX" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+   
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!--BOUNDLE-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        
+    <!--Popper-->
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>        
 
 
     <style>
@@ -177,74 +181,86 @@
       </svg>
 <main id="main">
 
-    <div class = "container">
-        <header class = "d-flex flex-wrap justify-content py-6 " >
-            
-            
-            <div class="d-flex flex-wrap justify-content py-6">
-              
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffff" class="bi bi-list" viewBox="0 0 16 16" onclick="toggleNav()" >
-                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
-                    </svg>
-               
-            
-                <a href="/" class="">
-                        <span class="fs-4" style="font-size:25px;cursor:pointer; color:#d2b15f;" >Portal </span>  
-                        <span class="fs-4" style="font-size:25px;cursor:pointer; color:#3a7dd8;" > Nomina</span>     
-                </a>   
-            </div>    
-           
-        </header>
-    </div>
-
-    <div class="d-flex flex-row">
-        <!-- Sidebar -->
-        <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3" style="width: 180px; display:active; background-color:#404c5c; color:white;">
-           
-            
-            <ul class="nav nav-pills flex-column mb-auto">
-                
-                    <a href="#" class="nav-link active" aria-current="page">
-                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-                        Home
-                    </a>
-                
-               
-                    <a href="#" class="nav-link text-white">
-                        <svg class="bi pe-none me-2 bg-white " width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                        Dashboard
-                    </a>
-               
-              
-                    <a href="#" class="nav-link text-white">
-                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-                        Orders
-                    </a>
-                
-                
-                    <a href="#" class="nav-link text-white">
-                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-                        Products
-                    </a>
-                
-                
-                    <a href="#" class="nav-link text-white">
-                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
-                        Customers
-                    </a>
-                
+    <!--HEADER-->
+    <section id= "container"class = "">
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>                        
+            </button>
+            <a class="navbar-brand" href="#">WebSiteName</a>
+          </div>
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Page 1-1</a></li>
+                  <li><a href="#">Page 1-2</a></li>
+                  <li><a href="#">Page 1-3</a></li>
+                </ul>
+              </li>
+              <li><a href="#">Page 2</a></li>
+              <li><a href="#">Page 3</a></li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </section>
+    <!--END HEADER-->  
+    <div  class="d-flex flex-column">
+
+        <div id="sidebar" class=" align-items-stretch" style="width: 180px; display:active; background-color:#404c5c; color:white;">
+           
+            
+          <ul class="nav nav-pills flex-column mb-auto">
+
+            <a href="#" id="tab-home" class="nav-link text-white" onclick="selectTab(this)">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                Home
+            </a>
+            <a href="#" id="tab-dashboard" class="nav-link text-white" onclick="selectTab(this)">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                Dashboard
+            </a>
+            <!-- Repite lo siguiente para los demás enlaces -->
+            <a href="#" id="tab-orders" class="nav-link text-white" onclick="selectTab(this)">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                Orders
+            </a>
+            <a href="#" id="tab-products" class="nav-link text-white" onclick="selectTab(this)">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                Products
+            </a>
+            <a href="#" id="tab-customers" class="nav-link text-white" onclick="selectTab(this)">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                Customers
+            </a>
+        </ul>
             
         </div>
        <!-- JavaScript to Open/Close Sidebar -->
-    <script>
-
-        
-            function toggleNav() {
-                $("#sidebar").toggle();
+       <script>
+        let selectedTab = null;
+    
+        function selectTab(tab) {
+            if (selectedTab) {
+                selectedTab.classList.remove("active");
             }
-        
-   
+    
+            tab.classList.add("active");
+            selectedTab = tab;
+        }
+    
+     
     </script>
 
 </main>
