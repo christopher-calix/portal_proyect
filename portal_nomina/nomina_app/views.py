@@ -10,7 +10,7 @@ from django.views.generic.base import TemplateView
 
 
 class Dashboard(TemplateView):
-     template_name = 'views/dashboard.html'
+     template_name = 'views/base.html'
      
 class Companias(TemplateView):
      template_name = 'views/companias.html'
