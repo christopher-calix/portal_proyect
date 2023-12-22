@@ -10,25 +10,22 @@ from django.views.generic.base import TemplateView
 
 
 class Dashboard(TemplateView):
-     template_name = 'views/base.html'
+     template_name = 'views/main_views/dashboard.html'
      
-class Companias(TemplateView):
-     template_name = 'views/companias.html'
+class Company(TemplateView):
+     template_name = 'views/main_views/companies.html'
+
+class Users(TemplateView):
+     template_name = 'views/main_views/employees.html'
      
-class Empleados(TemplateView):
-     template_name = 'views/empleados.html'
+class Employees(TemplateView):
+     template_name = 'views/main_views/users.html'
+
+class Vouchers(TemplateView):
+     template_name = 'views/main_views/vouchers.html'
+
+class Uploads(TemplateView):
+     template_name = 'views/main_views/uploads.html'
      
-class Usuarios(TemplateView):
-     template_name = 'users/.html'
      
-class Comprobantes(TemplateView):
-     template_name = 'views/comprobantes.html'
      
-class Cargas(TemplateView):
-     template_name = 'views/cargas.html'
-    
-class CustomLoginView(LoginView):
-    template_name = 'accounts/login.html'
-    # Additional logic or customizations can be added here
-class CustomLogoutView(LogoutView):
-    template_name = 'accounts/logout.html' 
