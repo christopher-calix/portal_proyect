@@ -16,10 +16,10 @@ class Company(TemplateView):
      template_name = 'views/main_views/companies.html'
 
 class Users(TemplateView):
-     template_name = 'views/main_views/employees.html'
+     template_name = 'views/main_views/users.html'
      
 class Employees(TemplateView):
-     template_name = 'views/main_views/users.html'
+     template_name = 'views/main_views/employees.html'
 
 class Vouchers(TemplateView):
      template_name = 'views/main_views/vouchers.html'

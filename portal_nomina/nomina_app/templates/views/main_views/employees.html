@@ -5,43 +5,125 @@
 {% block content %}
 
 
-<div class="row">
-
-    <!-- Pending Requests Card Example -->
-    <div class="mb-4 w-100 h-25">
-        <div class="card border-left-warning shadow p-2 h-100  ">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            empleados</div>
-                        
-                    </div>
-                   
-                </div>
+<div class="row mt-3">
+    <div class="col-12">
+      <section class="card">
+        <div class="card-header">
+            <div class="">
+                <h6 class="float-start">Filtros</h6>
+                <a id="hide-panel" class="float-end link-dark" href="#panel-body-filter" data-bs-toggle="collapse" data-bs-target="#panel-body-filter" aria-expanded="true">
+                  <i class="fas fa-chevron-down"></i>
+                </a>
             </div>
         </div>
-    </div>
+        <div class="card-body">
+          <div class="collapse show " id="panel-body-filter">
+            <fieldset>
+              <div class="row g-2"> 
+                <div class="col-md-3">
+                  <label for="taxpayer_id" class="small text-muted text-uppercase">RFC</label>
+                  <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="RFC">
+                </div>
+                <div class="col-md-3">
+                    <label for="taxpayer_id" class="small text-muted text-uppercase">CURP</label>
+                    <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="CURP">
+                  </div>
+                <div class="col-md-3">
+                  <label for="name" class="small text-muted text-uppercase">Nombre/Razon Social</label>
+                  <input type="text" id="name" name="name" class="form-control" placeholder="Nombre">
+                </div>
+                <div class="col-md-3">
+                  <label for="mail" class="small text-muted text-uppercase">Correo</label>
+                  <input type="text" id="mail" name="mail" class="form-control" placeholder="Correo">
+                </div>
+                <div class="col-md-3">
+                    <label for="taxpayer_id" class="small text-muted text-uppercase">Compan&iacute;a</label>
+                    <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="Company">
+                  </div>
+                <div class="col-md-3">
+                  <label for="taxpayer_id" class="small text-muted text-uppercase">Departamento</label>
+                  <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="Departamento">
+                </div>
+                <div class="col-md-2">
+                    <label for="taxpayer_id" class="small text-muted text-uppercase">Puesto</label>
+                    <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="Puesto">
+                </div>
 
-</div>
-<div class="row">
 
-    <!-- Pending Requests Card Example -->
-    <div class="mb-4 w-100 h-25">
-        <div class="card border-left-warning shadow p-2 h-100  ">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Inicio</div>
-                        
-                    </div>
-                   
+                <div class="col-md-2">
+                  <label for="status" class="small text-muted text-uppercase">Status</label>
+                  <div class="input-group">
+                    <select id="status" class="form-control" data-bs-hide-disabled="true" data-bs-live-search="true">
+                      <option value="">Todos</option>
+                      <option value="A">Activo</option>
+                      <option value="S">Suspendido</option>
+                      <option value="P">Pendiente</option>
+                      <option value="R">Revocado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-2 d-flex flex-column">
+                    <label for="taxpayer_id" class="small text-muted text-uppercase">Clean</label>
+                    <button type="button" class="btn btn-danger w-auto" id="clean-bt">
+                      <i class="bi bi-eraser mr-2"></i> Limpiar </button>
+                  </div>
+                  
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </section>
+      
+
+        <section class="card mt-4">
+
+           <div class="card-header ">
+            <div class =" bg-success">
+                <h6 class="float-start mb-0">Empleados</h6>
+                <div class="float-end">
+                  <a id="refresh-users" title="Refrescar" href="#/">
+                    <i class="fas fa-sync"></i>
+                  </a>
                 </div>
             </div>
-        </div>
-    </div>
+           </div>
 
+           <div class="card-body">
+             <table class="table table-striped table-bordered nowrap" id="users">
+               <thead>
+                 <tr>
+                   <th>RFC</th>
+                   <th>CURP</th>
+                   <th>Nombre/Raz&oacute;n social</th>
+                 
+                   <th>Correos Electr&oacute;nico</th>
+                   <th>Departamento</th>
+                   <th>Puesto</th>
+                   <th>Estatus</th>
+                   <th>Opciones </th>
+                 </tr>
+               </thead>
+             </table>
+           </div>
+
+        </section>
+    </div>
 </div>
+
+<script>
+    document.getElementById("clean-bt").addEventListener("click", function() {
+      // Obtener todos los input y select del formulario
+      const inputs = document.querySelectorAll("#panel-body-filter input, #panel-body-filter select");
+
+      // Limpiar cada input y select
+      inputs.forEach(function(input) {
+        input.value = "";
+      });
+
+      // Reestablecer el select a la opción "Todos"
+      document.getElementById("status").value = "";
+    });
+  </script>
 
 {% endblock %}
