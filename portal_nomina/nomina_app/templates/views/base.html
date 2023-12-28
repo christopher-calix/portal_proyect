@@ -17,7 +17,8 @@
     <!-- Custom fonts for this template-->
     <link href="{% static 'nomina_app/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <!-- Custom fonts for this template-->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -25,8 +26,7 @@
     <!-- Con CDN  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-lgjTujj2/6dz+G30XxDeTfXKcUNd+V6Rc+dTj04H4pXTXj6E7XcgSlI4jOVcuJ6BPFIt8H2gMj2Aghx1ZdYPtA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<!-- O descarga los archivos y agrégales a tu proyecto -->
-
+    
 
     <!-- Custom styles for this template-->
     <link href=" {% static 'nomina_app/css/sb-admin-2.min.css' %}" rel="stylesheet">
@@ -44,6 +44,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.css" integrity="sha512-BB0bszal4NXOgRP9MYCyVA0NNK2k1Rhr+8klY17rj4OhwTmqdPUQibKUDeHesYtXl7Ma2+tqC6c7FzYuHhw94g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css" integrity="sha512-MT4B7BDQpIoW1D7HNPZNMhCD2G6CDXia4tjCdgqQLyq2a9uQnLPLgMNbdPY7g6di3hHjAI8NGVqhstenYrzY1Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
+    <!-- Include the Minimal theme sweetalert2 -->
+    <link rel="stylesheet" href="@sweetalert2/theme-minimal/minimal.css">
+
+    <!-- bootstrap 5.x or 4.x is supported. You can also use the bootstrap c    ss 3.3.x versions -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <!-- default icons used in the plugin are from Bootstrap 5.x icon library (which can be enabled by loading CSS below) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+
+    <!-- alternatively you can use the font awesome icon library if using with `fas` theme (or Bootstrap 4.x) by uncommenting below. -->
+    <!-- link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous" -->
+
+    <!-- the fileinput plugin styling CSS file -->
+    <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.2/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+
+    <!-- if using RTL (Right-To-Left) orientation, load the RTL CSS file after fileinput.css by uncommenting below -->
+    <!-- link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.2/css/fileinput-rtl.min.css" media="all" rel="stylesheet" type="text/css" /-->
 
 
    
@@ -184,7 +201,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-search fa-fw"></i>
                             </a>
-                            <!-- Dropdown - Messages -->
+                            <!-- Dropdown - Messages --><script src="sweetalert2/dist/sweetalert2.min.js"></script>
                             <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                 aria-labelledby="searchDropdown">
                                 <form class="form-inline mr-auto w-100 navbar-search">
@@ -373,10 +390,11 @@
                    
                     <div class="card-header px-0 ">
                         <div class=" border-left-info shadow p-2 h-100 ">
-                          <a  href="{% url 'nomina_app:dashboard' %}" class="me-2"><i class="bi bi-house"></i> Inicio</a>
-                          {% if request.resolver_match.urlconf == '/company/' %}
-                          <a  href="{% url 'nomina_app:dashboard' %}" class="me-2"><i class="bi bi-person"></i> / Company</a>
-                          {% endif %}
+                          <a  href="{% url 'nomina_app:dashboard' %}" class="me-2" style="text-decoration: none;"><i class="bi bi-house"></i> Inicio&nbsp;&nbsp;&nbsp;/</a>
+                         
+                          <a href="" class="me-2" style="text-decoration: none;">{{ request.path|slice:"1:-1" }}</a>
+
+
                         </div>
                 </div>
                     
@@ -442,6 +460,10 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'nomina_app/vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'nomina_app/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Enlaces a Bootstrap y Font Awesome (asegúrate de incluir estos enlaces en tu documento) -->
+    
+    
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
     <script src="{% static 'nomina_app/vendor/jquery-easing/jquery.easing.min.js'  %}"></script>
@@ -465,6 +487,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/jquery-clockpicker.min.js" integrity="sha512-x0qixPCOQbS3xAQw8BL9qjhAh185N7JSw39hzE/ff71BXg7P1fkynTqcLYMlNmwRDtgdoYgURIvos+NJ6g0rNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.js" integrity="sha512-1QoWYDbO//G0JPa2VnQ3WrXtcgOGGCtdpt5y9riMW4NCCRBKQ4bs/XSKJAUSLIIcHmvUdKCXmQGxh37CQ8rtZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="date-picker.js"></script>
+
+    <!-- Sweet alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="sweetalert2/dist/sweetalert2.min.js"></script> 
+
+    
+
 </body>
 
 </html>
