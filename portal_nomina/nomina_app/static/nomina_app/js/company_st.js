@@ -123,38 +123,59 @@ if (estado) {
 
 
 
-function template(){
+function loadDoc() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    document.getElementById("demo").innerHTML = this.responseText;
+    }
+  xhttp.open("GET", "ajax_info.txt", true);
+  xhttp.send();
+}
 
-  const myCustomHTML = `
-  <template id="my-template">
-  <swal-title>
-    Save changes to "Untitled 1" before closing?
-  </swal-title>
-  <swal-icon type="warning" color="red"></swal-icon>
-  <swal-button type="confirm">
-    Save As
-  </swal-button>
-  <swal-button type="cancel">
-    Cancel
-  </swal-button>
-  <swal-button type="deny">
-    Close without Saving
-  </swal-button>
-  <swal-param name="allowEscapeKey" value="false" />
-  <swal-param
-    name="customClass"
-    value='{ "popup": "my-popup" }' />
-  <swal-function-param
-    name="didOpen"
-    value="popup => console.log(popup)" />
-  </template>
-`;
 
-  Swal.fire({
-    template: "#my-template"
+function mostrarFormulario() {
+  // Crear una ventana emergente
+  var popup = window.open('', 'Popup', 'width=400,height=300');
+
+  // Crear un formulario dinámicamente dentro de la ventana emergente
+  var form = document.createElement('form');
+  form.id = 'popupForm';
+
+  var labelNombre = document.createElement('label');
+  labelNombre.textContent = 'Nombre:';
+  form.appendChild(labelNombre);
+
+  var inputNombre = document.createElement('input');
+  inputNombre.type = 'text';
+  inputNombre.name = 'nombre';
+  form.appendChild(inputNombre);
+  form.appendChild(document.createElement('br'));
+
+  var labelEmail = document.createElement('label');
+  labelEmail.textContent = 'Email:';
+  form.appendChild(labelEmail);
+
+  var inputEmail = document.createElement('input');
+  inputEmail.type = 'email';
+  inputEmail.name = 'email';
+  form.appendChild(inputEmail);
+  form.appendChild(document.createElement('br'));
+
+  var submitButton = document.createElement('input');
+  submitButton.type = 'submit';
+  submitButton.value = 'Enviar';
+  form.appendChild(submitButton);
+
+  // Agregar el formulario al contenido de la ventana emergente
+  popup.document.body.appendChild(form);
+
+  // Manejar el envío del formulario (simulado con un console.log)
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    console.log('Datos del formulario:', new FormData(form));
+    // Puedes enviar los datos del formulario a tu servidor aquí
+
+    // Cerrar la ventana emergente después de enviar el formulario
+    popup.close();
   });
-  
-  
-  document.getElementById('addComp').addEventListener('click', template);
-
 }
