@@ -14,6 +14,8 @@ class Dashboard(TemplateView):
      
 class Company(TemplateView):
      template_name = 'views/main_views/companies.html'
+     
+      
 
 class Users(TemplateView):
      template_name = 'views/main_views/users.html'

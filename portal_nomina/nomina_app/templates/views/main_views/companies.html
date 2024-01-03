@@ -3,7 +3,19 @@
 
 
 {% block content %}
+<style>
 
+  .icon-button {
+    padding: 0; /* Elimina el relleno interno del botón */
+    border: none; /* Elimina el borde del botón */
+    background: none; /* Elimina el fondo del botón */
+}
+
+.icon-button i {
+    font-size: 1.5rem; /* Ajusta el tamaño del icono según sea necesario */
+}
+
+</style>
 
 
 <div class="row mt-3">
@@ -23,7 +35,7 @@
               <div class="row g-2">
                 <div class="col-md-3">
                   <label for="taxpayer_id" class="small text-muted text-uppercase">RFC</label>
-                  <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="RFC">
+                  <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" placeholder="RFC" >
                 </div>
                 <div class="col-md-4">
                   <label for="name" class="small text-muted text-uppercase">Nombre/Razon Social</label>
@@ -94,7 +106,7 @@
 
 
                
-            <!--modal start--> 
+            <!--modal start ------------------------------------------------------------------------------------------------------------------------------------------> 
 
             <!-- Modal -->
               <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -108,118 +120,205 @@
 
                     <div class="container-fluid">
 
-                          <div class="row g-2">
-                            <div class="col-m-5">
-                              <label for="validationCustomUsername" class="form-label">Username</label>
-                              <div class="input-group has-validation">
-                                <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
-                                <div class="invalid-feedback">
-                                  Please choose a username.
+                          <form class="row g-2 needs-validation" novalidate>
+
+                              <div class="col-m-5">
+                                <label for="validationCustomUsername" class="form-label">Raz&oacute;n Social</label>
+                                <div class="input-group has-validation">
+                                  <span class="input-group-text" id="inputGroupPrepend"> </span>
+                                  <input type="text" class="form-control" id="razonSoc" aria-describedby="inputGroupPrepend" required>
+                                  <div class="invalid-feedback">
+                                    This field is required.
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                           
-                            <div class="col-md-6 ">
-                             <label for="taxpayer_id" class="small text-muted  ">Rfc</label>
-                             <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                            </div>
-
-                            <div class="col-md-6 ">
-                             <label for="taxpayer_id" class="small text-muted  ">Logo</label>
-                             <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                            </div>
-
-                            <div class="col-m-5 text-center mt-2 ">
-                              <h5 for="taxpayer_id" class="mt-2 small  justify-content-center align-content-center">Informacion de Notificaciones(correos)</h5>
-                            </div>
-
-                            <div class="input-group mb-3 ">
-                              <input type="text" class="form-control" placeholder="Agrega un correo" aria-label="Recipient's username" aria-describedby="button-addon2">
-                              <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="bi bi-plus-square"></i></i></button>                            
-                            </div>
-
-                            <div class="input-group mb-3 mt-0">
-                              <input type="text" class="form-control" placeholder="Agrega un correo" aria-label="Recipient's username" aria-describedby="button-addon2">
-                              <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="bi bi-trash-fill"></i></button>
                             
-                            </div>
-                         
+                              <div class="col-md-4 ">
+                               <label for="validationCustomUsername" class="form-label">Rfc</label>
+                                <div class="input-group has-validation">
+                                  <span class="input-group-text" id="inputGroupPrepend"> </span>
+                                  <input type="text" class="form-control" id="rfc_id" aria-describedby="inputGroupPrepend" required>
+                                  <div class="invalid-feedback">
+                                    This field is required.
+                                  </div>
+                                </div>
+                              </div>
 
-                                 
-                            <div class="col-m-5 text-center mt-2 ">
-                              <h5 for="taxpayer_id" class="mt-2 small  text-uppercase  justify-content-center align-content-center">Informacion de Domicilio</h5>
-                            </div>
+                              <div class="col-md-8 ">
+                               <label for="validationCustomUsername" class="form-label">Logo</label>
+                               <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
+                              
+                               <div class="invalid-feedback">
+                                This field is required.
+                               </div>
 
-                            <div class="col-md-6 ">
-                              <label for="taxpayer_id" class="small text-muted  ">Estado</label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                             </div>
+                              </div>
+
+                              <div class="col-m-5 text-center mt-4">
+                                <h5 for="taxpayer_id" class="mt-2 small  justify-content-center align-content-center">Informacion de Notificaciones(correos)</h5>
+                              </div>
+
+                              <div class="input-group mb-3 ">
+                                <input type="text" class="form-control" id="email-sender" placeholder="Agrega un correo" aria-label="Recipient's username" aria-describedby="button-addon2" >
+                                <button class="btn btn-outline-secondary " type="button" id="add-Email"><i class="bi bi-plus-square"></i></i></button>  
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>                          
+                              </div>
+
+                              <div class="input-group mb-3 mt-0">
+                                <input type="text" class="form-control" id="email-reciever" placeholder="Correos selected" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+                                <button class="btn btn-outline-secondary" type="button" id="remove-Email"><i class="bi bi-trash-fill"></i></button>
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+                              </div>
                             
-                             <div class="col-md-6 ">
-                              <label for="taxpayer_id" class="small text-muted  ">Municipio</label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                             </div>
-                                  
-                             <div class="col-md-6 ">
-                              <label for="taxpayer_id" class="small text-muted  ">Localidad </label>
-                               <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                             </div>
+
+
+                              <div class="col-m-5 text-center mt-2 ">
+                                <h5 for="taxpayer_id" class="mt-2 small  text-uppercase  justify-content-center align-content-center">Informacion de Domicilio</h5>
+                              </div>
+
+                              <div class="col-md-6 ">
+                                <label for="taxpayer_id" class="small text-muted  ">Estado</label>
+                                <div class="input-group">
+
+                                  <label class="input-group-text" for="inputGroupSelect01">Estados</label>
+                                    
+                                        <select class="form-select" id="inputGroupSelect01">
+                                          <option value="T">Seleccione un estado</option>
+                                          <option value="Aguascalientes">Aguascalientes</option>
+                                          <option value="Baja California">Baja California</option>
+                                          <option value="Baja California Sur">Baja California Sur</option>
+                                          <option value="Campeche">Campeche</option>
+                                          <option value="Chiapas">Chiapas</option>
+                                          <option value="Chihuahua">Chihuahua</option>
+                                          <option value="CDMX">Ciudad de México</option>
+                                          <option value="Coahuila">Coahuila</option>
+                                          <option value="Colima">Colima</option>
+                                          <option value="Durango">Durango</option>
+                                          <option value="Estado de México">Estado de México</option>
+                                          <option value="Guanajuato">Guanajuato</option>
+                                          <option value="Guerrero">Guerrero</option>
+                                          <option value="Hidalgo">Hidalgo</option>
+                                          <option value="Jalisco">Jalisco</option>
+                                          <option value="Michoacán">Michoacán</option>
+                                          <option value="Morelos">Morelos</option>
+                                          <option value="Nayarit">Nayarit</option>
+                                          <option value="Nuevo León">Nuevo León</option>
+                                          <option value="Oaxaca">Oaxaca</option>
+                                          <option value="Puebla">Puebla</option>
+                                          <option value="Querétaro">Querétaro</option>
+                                          <option value="Quintana Roo">Quintana Roo</option>
+                                          <option value="San Luis Potosí">San Luis Potosí</option>
+                                          <option value="Sinaloa">Sinaloa</option>
+                                          <option value="Sonora">Sonora</option>
+                                          <option value="Tabasco">Tabasco</option>
+                                          <option value="Tamaulipas">Tamaulipas</option>
+                                          <option value="Tlaxcala">Tlaxcala</option>
+                                          <option value="Veracruz">Veracruz</option>
+                                          <option value="Yucatán">Yucatán</option>
+                                          <option value="Zacatecas">Zacatecas</option>
+                                        </select>
+                                      <div class="invalid-feedback">
+                                        This field is required.
+                                      </div>
+                                  </div>
+                               </div>
                              
-                             <div class="col-md-6 ">
-                               <label for="taxpayer_id" class="small text-muted  ">Codigo Postal </label>
-                               <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                             </div>
+                               <div class="col-md-6 ">
+                                <label for="taxpayer_id" class="small text-muted  ">Municipio</label>
+                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+                               </div>
 
-                             <div class="col-md-8">
-                              <label for="taxpayer_id" class="small text-muted  "> Calle </label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" >
+                               <div class="col-md-6 ">
+                                <label for="taxpayer_id" class="small text-muted  ">Localidad </label>
+                                 <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                 <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+                               </div>
+
+                               <div class="col-md-6 ">
+                                 <label for="taxpayer_id" class="small text-muted  ">Codigo Postal </label>
+                                 <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                 <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+                               </div>
+
+                               <div class="col-md-8">
+                                <label for="taxpayer_id" class="small text-muted  "> Calle </label>
+                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+
+                               </div>
+
+                               <div class="col-md-2">
+                                <label for="taxpayer_id" class="small text-muted  "> Numero Ext </label>
+                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+
+                               </div>
+
+                               <div class="col-md-2">
+                                <label for="taxpayer_id" class="small text-muted  "> Numero Int </label>
+                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" >
+
+                               </div>
+
+                              <div class="col-m-5 text-center mt-2 ">
+                                <h5 for="taxpayer_id" class="mt-2 small  justify-content-center align-content-center">Certificados</h5>
+                              </div>
+
+                              <div class="col-md-4">
+                                <label for="taxpayer_id" class="small text-muted ">Certificado (.cer):</label>
+                                <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
                               
-                             </div>
+                                <div class="invalid-feedback">
+                                 This field is required.
+                                </div>
+                              </div>
 
-                             <div class="col-md-2">
-                              <label for="taxpayer_id" class="small text-muted  "> Numero Ext </label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" >
+                              <div class="col-md-4">
+                                <label for="taxpayer_id" class="small text-muted ">Llave (.key):</label>
+                                <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
                               
-                             </div>
+                                <div class="invalid-feedback">
+                                 This field is required.
+                                </div>
+                              </div>
 
-                             <div class="col-md-2">
-                              <label for="taxpayer_id" class="small text-muted  "> Numero Int </label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" >
-                              
-                             </div>
-                             
-                            <div class="col-m-5 text-center mt-2 ">
-                              <h5 for="taxpayer_id" class="mt-2 small     justify-content-center align-content-center">Certificados</h5>
-                            </div>
+                              <div class="col-md-4">
+                                <label for="taxpayer_id" class="small text-muted ">Contraseña</label>
+                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                                <div class="invalid-feedback">
+                                  This field is required.
+                                </div>
+                              </div>
 
-                            <div class="col-md-4">
-                              <label for="taxpayer_id" class="small text-muted ">Certificado (.cer):</label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                            </div>
+                              <div class="modal-footer mt-4">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-building-fill-add"></i> Agregar</button>
+                              </div>
 
-                            <div class="col-md-4">
-                              <label for="taxpayer_id" class="small text-muted ">Llave (.key):</label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                            </div>
-                             
-                            <div class="col-md-4">
-                              <label for="taxpayer_id" class="small text-muted ">Contraseña</label>
-                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control">
-                            </div>
+                            </form>
+                    </div><!--container-->
 
-                          </div>
-                    </div>
-
-                   <div class="modal-footer mt-4">
-                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                     <button type="button" class="btn btn-primary"><i class="bi bi-building-fill-add"></i> Agregar</button>
-                   </div>
+                   
                  </div>
                </div>
               </div>
 
-           <!--modal form end-->
+           <!----------------------  modal form end ---------------------------------------------------------------------------------------------------------------------------------------------------------->
 
           </div>
 
@@ -250,6 +349,36 @@
       }, false)
     })
 })()
+
+
+
+//leading with the email sender while using inputs
+// Select the buttons and input fields
+const addEmailButton = document.getElementById("add-Email");
+const removeEmailButton = document.getElementById("remove-Email");
+const emailSenderInput = document.getElementById("email-sender");
+const emailReceiverInput = document.getElementById("email-reciever");
+
+// Add event listeners to the buttons
+addEmailButton.addEventListener("click", function() {
+  const emailToAdd = emailSenderInput.value.trim(); // Get email from sender input
+
+  if (emailToAdd) {
+    // Append email to receiver input, handling existing emails
+    if (emailReceiverInput.value) {
+      emailReceiverInput.value += ", " + emailToAdd;
+    } else {
+      emailReceiverInput.value = emailToAdd;
+    }
+
+    emailSenderInput.value = ""; // Clear sender input
+  }
+});
+
+removeEmailButton.addEventListener("click", function() {
+  emailReceiverInput.value = ""; // Clear receiver input
+});
+
     </script>
 </div>
   
