@@ -94,7 +94,18 @@
 
             <div class="mt-2 mb-5"> 
           
-              <label class="float-start "> ENTRADAS </label>
+              <label class="float-start ">Mostrar   
+                
+                <div class="col-sm input-group mb-3">
+                
+                  <select class="form-select" id="inputGroupSelect01">
+                    <option selected="">10</option>
+                    <option value="1">25</option>
+                    <option value="2">50</option>
+                    <option value="3">100</option>
+                  </select>
+                </div>
+                 Entradas </label>
               <button class ="position-relative py-1 px-4 btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="bi bi-people-fill"></i> Agregar </>
             </div>
 
@@ -132,18 +143,9 @@
 
                          <form class="row g-2 needs-validation" novalidate>
 
-                             <div class="col-m-5">
-                               <label for="validationCustomUsername" class="form-label">Raz&oacute;n Social</label>
-                               <div class="input-group has-validation">
-                                 <span class="input-group-text" id="inputGroupPrepend"> </span>
-                                 <input type="text" class="form-control" id="razonSoc" aria-describedby="inputGroupPrepend" required>
-                                 <div class="invalid-feedback">
-                                   This field is required.
-                                 </div>
-                               </div>
-                             </div>
+                             
                            
-                             <div class="col-md-4 ">
+                             <div class="col-md-5 ">
                               <label for="validationCustomUsername" class="form-label">Rfc</label>
                                <div class="input-group has-validation">
                                  <span class="input-group-text" id="inputGroupPrepend"> </span>
@@ -154,91 +156,68 @@
                                </div>
                              </div>
 
-                             <div class="col-md-8 ">
-                              <label for="validationCustomUsername" class="form-label">Logo</label>
-                              <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
-                             
-                              <div class="invalid-feedback">
-                               This field is required.
-                              </div>
-
-                             </div>
-
-                             <div class="col-m-5 text-center mt-4">
-                               <h5 for="taxpayer_id" class="mt-2 small  justify-content-center align-content-center">Informacion de Notificaciones(correos)</h5>
-                             </div>
-
-                             <div class="input-group mb-3 ">
-                               <input type="text" class="form-control" id="email-sender" placeholder="Agrega un correo" aria-label="Recipient's username" aria-describedby="button-addon2" >
-                               <button class="btn btn-outline-secondary " type="button" id="add-Email"><i class="bi bi-plus-square"></i></i></button>  
-                               <div class="invalid-feedback">
-                                 This field is required.
-                               </div>                          
-                             </div>
-
-                             <div class="input-group mb-3 mt-0">
-                               <input type="text" class="form-control" id="email-reciever" placeholder="Correos selected" aria-label="Recipient's username" aria-describedby="button-addon2" required>
-                               <button class="btn btn-outline-secondary" type="button" id="remove-Email"><i class="bi bi-trash-fill"></i></button>
-                               <div class="invalid-feedback">
-                                 This field is required.
+                             <div class="col-md-5 ">
+                              <label for="validationCustomUsername" class="form-label">CURP</label>
+                               <div class="input-group has-validation">
+                                 <span class="input-group-text" id="inputGroupPrepend"> </span>
+                                 <input type="text" class="form-control" id="rfc_id" aria-describedby="inputGroupPrepend" required>
+                                 <div class="invalid-feedback">
+                                   This field is required.
+                                 </div>
                                </div>
                              </div>
-                           
 
 
-                             <div class="col-m-5 text-center mt-2 ">
-                               <h5 for="taxpayer_id" class="mt-2 small  text-uppercase  justify-content-center align-content-center">Informacion de Domicilio</h5>
+                             <div class="col-md-5 ">
+                              <label for="validationCustomUsername" class="form-label">ID</label>
+                               <div class="input-group has-validation">
+                                 <span class="input-group-text" id="inputGroupPrepend"> </span>
+                                 <input type="text" class="form-control" id="rfc_id" aria-describedby="inputGroupPrepend" required>
+                                 <div class="invalid-feedback">
+                                   This field is required.
+                                 </div>
+                               </div>
+                             </div>
+
+                             <div class="col-md-5 ">
+                              <label for="validationCustomUsername" class="form-label">Nombre</label>
+                               <div class="input-group has-validation">
+                                 <span class="input-group-text" id="inputGroupPrepend"> </span>
+                                 <input type="text" class="form-control" id="rfc_id" aria-describedby="inputGroupPrepend" required>
+                                 <div class="invalid-feedback">
+                                   This field is required.
+                                 </div>
+                               </div>
+                             </div>
+
+
+                            
+                             <div class="col-md-6 ">
+                              <label for="taxpayer_id" class="small text-muted  ">Correo</label>
+                              <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
+                              <div class="invalid-feedback">
+                                This field is required.
+                              </div>
                              </div>
 
                              <div class="col-md-6 ">
-                               <label for="taxpayer_id" class="small text-muted  ">Estado</label>
-                               <div class="input-group">
-
-                                 <label class="input-group-text" for="inputGroupSelect01">Estados</label>
-                                   
-                                       <select class="form-select" id="inputGroupSelect01">
-                                         <option value="T">Seleccione un estado</option>
-                                         <option value="Aguascalientes">Aguascalientes</option>
-                                         <option value="Baja California">Baja California</option>
-                                         <option value="Baja California Sur">Baja California Sur</option>
-                                         <option value="Campeche">Campeche</option>
-                                         <option value="Chiapas">Chiapas</option>
-                                         <option value="Chihuahua">Chihuahua</option>
-                                         <option value="CDMX">Ciudad de México</option>
-                                         <option value="Coahuila">Coahuila</option>
-                                         <option value="Colima">Colima</option>
-                                         <option value="Durango">Durango</option>
-                                         <option value="Estado de México">Estado de México</option>
-                                         <option value="Guanajuato">Guanajuato</option>
-                                         <option value="Guerrero">Guerrero</option>
-                                         <option value="Hidalgo">Hidalgo</option>
-                                         <option value="Jalisco">Jalisco</option>
-                                         <option value="Michoacán">Michoacán</option>
-                                         <option value="Morelos">Morelos</option>
-                                         <option value="Nayarit">Nayarit</option>
-                                         <option value="Nuevo León">Nuevo León</option>
-                                         <option value="Oaxaca">Oaxaca</option>
-                                         <option value="Puebla">Puebla</option>
-                                         <option value="Querétaro">Querétaro</option>
-                                         <option value="Quintana Roo">Quintana Roo</option>
-                                         <option value="San Luis Potosí">San Luis Potosí</option>
-                                         <option value="Sinaloa">Sinaloa</option>
-                                         <option value="Sonora">Sonora</option>
-                                         <option value="Tabasco">Tabasco</option>
-                                         <option value="Tamaulipas">Tamaulipas</option>
-                                         <option value="Tlaxcala">Tlaxcala</option>
-                                         <option value="Veracruz">Veracruz</option>
-                                         <option value="Yucatán">Yucatán</option>
-                                         <option value="Zacatecas">Zacatecas</option>
-                                       </select>
-                                     <div class="invalid-feedback">
-                                       This field is required.
-                                     </div>
-                                 </div>
+                              <label for="taxpayer_id" class="small text-muted  ">Status</label>
+                              <div class="input-group mb-3">
+                                
+                                <label class="input-group-text" for="inputGroupSelect01" required>Status</label>
+                                <select class="form-select" id="inputGroupSelect01" >
+                                  
+                                  <option value="1">Activo</option>
+                                  <option value="2">Suspendido</option>
+                                </select>
+                              </div>
+                              <div class="invalid-feedback">
+                                This field is required.
+                              </div>
                               </div>
                             
                               <div class="col-md-6 ">
-                               <label for="taxpayer_id" class="small text-muted  ">Municipio</label>
+                               <label for="taxpayer_id" class="small text-muted  ">Departamento</label>
                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
                                <div class="invalid-feedback">
                                  This field is required.
@@ -246,7 +225,7 @@
                               </div>
 
                               <div class="col-md-6 ">
-                               <label for="taxpayer_id" class="small text-muted  ">Localidad </label>
+                               <label for="taxpayer_id" class="small text-muted  ">Puesto </label>
                                 <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
                                 <div class="invalid-feedback">
                                  This field is required.
@@ -254,15 +233,15 @@
                               </div>
 
                               <div class="col-md-6 ">
-                                <label for="taxpayer_id" class="small text-muted  ">Codigo Postal </label>
+                                <label for="taxpayer_id" class="small text-muted  ">Contraseña</label>
                                 <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
                                 <div class="invalid-feedback">
                                  This field is required.
                                </div>
                               </div>
 
-                              <div class="col-md-8">
-                               <label for="taxpayer_id" class="small text-muted  "> Calle </label>
+                              <div class="col-md-6">
+                               <label for="taxpayer_id" class="small text-muted  "> Repetir Contraseña </label>
                                <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
                                <div class="invalid-feedback">
                                  This field is required.
@@ -270,50 +249,8 @@
 
                               </div>
 
-                              <div class="col-md-2">
-                               <label for="taxpayer_id" class="small text-muted  "> Numero Ext </label>
-                               <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
-                               <div class="invalid-feedback">
-                                 This field is required.
-                               </div>
+                              
 
-                              </div>
-
-                              <div class="col-md-2">
-                               <label for="taxpayer_id" class="small text-muted  "> Numero Int </label>
-                               <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" >
-
-                              </div>
-
-                             <div class="col-m-5 text-center mt-2 ">
-                               <h5 for="taxpayer_id" class="mt-2 small  justify-content-center align-content-center">Certificados</h5>
-                             </div>
-
-                             <div class="col-md-4">
-                               <label for="taxpayer_id" class="small text-muted ">Certificado (.cer):</label>
-                               <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
-                             
-                               <div class="invalid-feedback">
-                                This field is required.
-                               </div>
-                             </div>
-
-                             <div class="col-md-4">
-                               <label for="taxpayer_id" class="small text-muted ">Llave (.key):</label>
-                               <input type="file" class="form-control  has-validation" id="validationCustomUsername"aria-label="Upload"  required>
-                             
-                               <div class="invalid-feedback">
-                                This field is required.
-                               </div>
-                             </div>
-
-                             <div class="col-md-4">
-                               <label for="taxpayer_id" class="small text-muted ">Contraseña</label>
-                               <input type="text" id="taxpayer_id" name="taxpayer_id" class="form-control" required>
-                               <div class="invalid-feedback">
-                                 This field is required.
-                               </div>
-                             </div>
 
                              <div class="modal-footer mt-4">
                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
