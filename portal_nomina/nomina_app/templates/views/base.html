@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title> Portal Nomina </title>
+    <title>Portal Nomina | {% block title %}{% endblock %}</title>
     
     <!-- Custom fonts for this template-->
     <link href="{% static 'nomina_app/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -30,9 +30,6 @@
     <link href=" {% static 'nomina_app/css/sb-admin-2.min.css' %}" rel="stylesheet">
 
 
-    <!-- Custom icons for this template-->
-    
-    
 
     <!-- Custom scripts for this template(DatePicker)-->
    
@@ -43,10 +40,6 @@
   
     <!-- Include the sweetalert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.2/dist/sweetalert2.min.css" rel="stylesheet">
-       
-
-      
-
 
         
     <!-- bootstrap 5.x or 4.x is supported. You can also use the bootstrap c    ss 3.3.x versions -->

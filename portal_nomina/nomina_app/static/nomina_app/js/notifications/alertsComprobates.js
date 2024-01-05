@@ -79,7 +79,7 @@ async function SendCompt(){
 
                   <h2>PDF</h2>
                   <p><i class="bi bi-filetype-pdf iconPdf"></i></i></p>
-                  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+                  <input type="checkbox" id="" name="" value="">
                   
                  </div>
 
@@ -88,12 +88,12 @@ async function SendCompt(){
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Yes, download it!"
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
+            title: "Downloaded!",
+            text: "Your file has been downloaded.",
             icon: "success"
           });
         }
@@ -130,6 +130,39 @@ async function SendCompEmp(){
         title: "Are you sure?",
         text: "You won't be able to revert this!",
         icon: "info",
+        html: `
+        <style>
+             .iconXml{
+              font-size: 48px; 
+              color:#099AFE;
+            }
+            .iconPdf{
+              font-size: 48px; 
+              color:#FE0909;
+            }
+        </style>
+        <div class="d-flex justify-content-evenly"> 
+
+              
+                 <div class="col-md-3 ">
+
+                  <h2>XMLS</h2>
+                  <p><i class="bi bi-filetype-xml bi-3x iconXml"></i></p>
+                  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+                  
+                 </div>
+
+
+                 <div class="col-md-3 ">
+
+                  <h2>PDF</h2>
+                  <p><i class="bi bi-filetype-pdf iconPdf"></i></i></p>
+                  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+                  
+                 </div>
+
+              </div>   
+        `,
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
@@ -137,8 +170,8 @@ async function SendCompEmp(){
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
+            title: "Downloaded!",
+            text: "Your file has been downloaded.",
             icon: "success"
           });
         }
@@ -149,19 +182,27 @@ async function SendCompEmp(){
 
 async function SendPDF(){
     Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "Would yopou like to generate a report?",
+        text: "",
         icon: "info",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Yes, generete it!"
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success"
+            title: "Sended!",
+            text: "Your file has been sended.",
+            icon: "success",
+            html: `
+      
+            <div> 
+            <h3> The PDF file was started to be generated, once it is ready it will be sent by email to:<br> {e-mail}<br> 
+            In case you have any error please contact technical support and specify the following id:<br>{id_report}</h3> 
+              
+            </div>   
+        `,
           });
         }
       });

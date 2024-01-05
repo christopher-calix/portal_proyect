@@ -3,8 +3,12 @@
 {%extends '../base.html'%}
 
 
+{% block title_main %}¡Bienvenido (a)! <b>{{ user.account.first_name }}</b> al Portal de Nómina{% endblock %}
+
 
 {% block content %}
+
+<script src="{% static 'nomina_app/js/dashboard/upload.js' %}"></script> 
 
 
 <div class="row">
@@ -22,10 +26,13 @@
  
 
 <!-- Card Body -->
-<div class="card-body ">
+<form class="card-body ">
+
+    
     <div class="d-flex chart-area border border-black align-items-center text-center rounded">
+
         <div class="container" id="uploaded-file">
-            <h1>Upload a file</h1>
+            <h1>Upload files</h1>
             <div class="upload-container" >
 
                         
@@ -38,43 +45,27 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <!-- Input file -->
     <input type="file" id="file-upload" style="display: none;" onchange="handleFileUpload(this)">
 
-    <!-- Button to trigger file input -->
+    <!-- Button to trigger file input               type="submit"-->
     <a class="btn btn-primary mt-2" href="#" role="button" onclick="document.getElementById('file-upload').click()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-            class="bi bi-folder-symlink-fill" viewBox="0 0 16 16">
-            <path
-                d="M13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14h10.348a2 2 0 0 0 1.991-1.819l.637-7A2 2 0 0 0 13.81 3M2.19 3c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672a1 1 0 0 1 .707.293L7.586 3H2.19m9.608 5.271-3.182 1.97c-.27.166-.616-.036-.616-.372V9.1s-2.571-.3-4 2.4c.571-4.8 3.143-4.8 4-4.8v-.769c0-.336.346-.538.616-.371l3.182 1.969c.27.166.27.576 0 .742" />
-        </svg> Upload files
+        <i class="bi bi-folder-symlink-fill"></i> Upload files
     </a>
-</div>
+
+    <button class="btn btn-success mt-2 mx-2" id="sender" type="submit" > Send File</button>
+
+</form>
 
 
 
         </div>
     </div>
-
-    <script>
-        // Función para manejar la carga de archivos
-        function handleFileUpload(input) {
-            var uploadedFileContainer = document.getElementById('uploaded-file');
-            var file = input.files[0];
-    
-            // Muestra el nombre del archivo en el contenedor
-            uploadedFileContainer.innerHTML = '<div  style=" padding:10px; width: 150px; height:200px; border-radius:10px; "> <svg xmlns="http://www.w3.org/2000/svg" background-color:"blue" height="100" width="100 " viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM96 48c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm-6.3 71.8c3.7-14 16.4-23.8 30.9-23.8h14.8c14.5 0 27.2 9.7 30.9 23.8l23.5 88.2c1.4 5.4 2.1 10.9 2.1 16.4c0 35.2-28.8 63.7-64 63.7s-64-28.5-64-63.7c0-5.5 .7-11.1 2.1-16.4l23.5-88.2zM112 336c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H112z"/></svg>' + file.name + '</div>';
-    
-            // Puedes agregar estilos adicionales o lógica según tus necesidades
-            uploadedFileContainer.style.border = '1px dashed #ccc';
-          
-            uploadedFileContainer.style.padding = '10px';
-            uploadedFileContainer.style.borderRadius = '10px';  // Cambia el valor '10px' según tus preferencias
-
-        }
-    </script>
+   
+   
 
   
 </div> 
