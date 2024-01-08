@@ -9,7 +9,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.base import TemplateView
 
 
-
+    
 from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
 
