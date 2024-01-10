@@ -224,7 +224,7 @@ RELATION_TYPE = (
 
 
 
-perceptions_dict = {
+perceptions_dicts = {
             "perception_001_exp": 0.00,
             "perception_001_grav": 0.00,
             "perception_002_exp": 0.00,
@@ -316,7 +316,7 @@ perceptions_dict = {
         }
 
 
-deductions_dict = {
+deductions_dicts = {
             "deduction_001": 0.00,
             "deduction_002": 0.00,
             "deduction_003": 0.00,
@@ -426,7 +426,7 @@ deductions_dict = {
             "deduction_107": 0.00,
         }
 
-otherpayments_dict = {
+otherpayments_dicts = {
            "otherpayment_001": 0.00,
            "otherpayment_002": 0.00,
            "otherpayment_003": 0.00,
