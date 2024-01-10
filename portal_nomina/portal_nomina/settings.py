@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Apps.nomina_app',
     'Apps.users',
+    
 ]
 
 MIDDLEWARE = [
@@ -153,5 +154,3 @@ LOGIN_REDIRECT_URL = '/secure'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = "users.User"
