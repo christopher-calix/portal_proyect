@@ -20,17 +20,34 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Apps.nomina_app',
-    'Apps.users',
-    
+   
 ]
+
+
+
+
+LOCAL_APPS = [
+    
+     'Apps.nomina_app',
+    'Apps.users',
+
+]
+
+#THIRDPARTY_APPS = (
+#  'djcelery',
+#  'sizefield',
+#  'maintenance_mode'
+#)
+
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS 
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -154,3 +171,45 @@ LOGIN_REDIRECT_URL = '/secure'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""
+Additional Data
+"""
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "amexiproc.test@gmail.com"
+EMAIL_HOST_PASSWORD = "6193dcd78e9cee"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+FK_INC_URL = "https://demo-facturacion.finkok.com/servicios/soap/inc.wsdl"
+FK_STAMP_URL = 'https://demo-facturacion.finkok.com/servicios/soap/stamp.wsdl'
+#FK_STAMP_URL = 'https://app2-demo.facturacion.finkok.com/servicios/soap/stamp.wsdl'
+FK_CANCEL_URL = 'https://demo-facturacion.finkok.com/servicios/soap/cancel.wsdl'
+#FK_CANCEL_URL = 'https://app2-demo.facturacion.finkok.com/servicios/soap/cancel.wsdl'
+FK_USERNAME = 'finkok_test@alfredo.com'
+FK_PASSWORD = 'f1nk0K#17'
+FK_NO_CER = '20001000000300022762'
+
+
+
+CERTIFICATE_STORAGE = Path(BASE_DIR, 'cfdi', 'sat_certificados')
+
+INVOICE_STORAGE = Path(BASE_DIR, 'tmp/')
+
+
+CERTIFICATE_STORAGE = Path(CERTIFICATE_STORAGE, 'local')
+
+INVOICE_STORAGE = Path(BASE_DIR, '/var/')
+SIGNED_STORAGE = Path(BASE_DIR, '/var/')
+
+if DEBUG:
+  INVOICE_STORAGE = Path('/tmp/')
+  SIGNED_STORAGE = Path('/tmp/')
+
+SESSION_COOKIE_AGE = 1500000
+
+VALIDATE_CFDI = False
+USERNAME_FK = 'ccalix@finkok.com.mx'
+PASSWORD_FK = 'Legoland1953!'

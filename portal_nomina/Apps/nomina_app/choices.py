@@ -486,6 +486,13 @@ PERCEPTION_TYPE = (
     ('053', 'Pagos que se realicen a extrabajadores que obtengan una jubilación en una sola exhibición derivados de la ejecución de resoluciones judicial o de un laudo'),
 )
 
+REPORT_TASKS_STATUS = (
+    ('P', 'Pending'),
+    ('I', 'In Process'),
+    ('F', 'Failed'),
+    ('C', 'Completed'),
+    ('D', 'downloaded'),
+)
 
 DEDUCTION_TYPE = (
     ('001', 'Seguridad social'),

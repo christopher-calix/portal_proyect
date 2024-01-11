@@ -1,12 +1,22 @@
+from __future__ import unicode_literals
+import os
+
 from django.db import models
 from django.shortcuts import render
 from django.http import HttpResponse
 import datetime
 from .choices import *
-##########################
-from __future__ import unicode_literals
+from Apps.nomina_app.utils import CreatePDF
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import JSONField
+from django.db import connection
+import xml.etree.ElementTree as etree
 
+from datetime import timedelta
+from random import choices
 from django.conf import settings
+from django.core.signing import Signer
+from .tasks import *
 from django.db import models  # Use 'models' instead of 'connection'
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
@@ -16,10 +26,10 @@ from django.db.models import F, Sum
 from django.dispatch import receiver  # Use 'receiver' directly
 from django.core import signing
 from .storage import satfile_storage, logo_storage, signed_storage, zip_storage, txt_storage, report_cfdis_storga
-from .cem.utils import FinkokWS
+from .utils import FinkokWS
 
 # Additional imports
-from django.contrib.postgres.fields import JSONField, ArrayField  # No changes needed
+
 from django.db.models.signals import post_save  # No changes needed
 from datetime import datetime, timedelta  # No changes needed
 import random  # No changes needed
@@ -28,42 +38,47 @@ import pyminizip  # No changes needed
 import os  # No changes needed
 import csv  # No changes needed
 
-# Create your models here.
+signer = Signer()  # Instantiate a Signer object for consistent signing
+##########################
 
+
+
+
+
+# Create your models here.
 class OverrideFileSystemStorage(FileSystemStorage):
 
     def __init__(self, location=settings.INVOICE_STORAGE, *args, **kwargs):
+        super().__init__(location, *args, **kwargs)
         self._location = location
-        super(OverrideFileSystemStorage, self).__init__(location, *args, **kwargs)
 
     def get_available_name(self, name, max_length=None):
         if self.exists(name):
             os.remove(os.path.join(self._location, name))
         else:
-            name = super(OverrideFileSystemStorage, self).get_available_name(name, max_length)
+            name = super().get_available_name(name, max_length)
         return name
 
 class OverrideFileSystemStorageImg(FileSystemStorage):
 
     def __init__(self, location=settings.MEDIA_ROOT, *args, **kwargs):
+        super().__init__(location, *args, **kwargs)
         self._location = location
-        super(OverrideFileSystemStorageImg, self).__init__(location, *args, **kwargs)
 
     def get_available_name(self, name, max_length=None):
         if self.exists(name):
             os.remove(os.path.join(self._location, name))
         else:
-            name = super(OverrideFileSystemStorageImg, self).get_available_name(name, max_length)
+            name = super().get_available_name(name, max_length)
         return name
-
 
 
 
 class Account(models.Model):
     taxpayer_id = models.CharField(db_index=True, max_length=14, null=True, unique=True)
     name = models.CharField(db_index=True, max_length=256, null=True)
-    email = ArrayField(models.EmailField(u'Correo electrónico', max_length=254, null=True), null=True, default=list)
-    address = models.ForeignKey('Address', null=True)
+    email = ArrayField(models.EmailField('Correo electrónico', max_length=254, null=True), null=True, default=list)
+    address = models.ForeignKey('Address', null=True, on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=STATUS_ACCOUNT, default='P')
     default = models.BooleanField(default=False)
 
@@ -73,9 +88,8 @@ class Account(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.taxpayer_id, self.name)
 
-
 class Business(Account):
-    user = models.ManyToManyField('users.User')
+    user = models.ManyToManyField('users.Profile')
     finkok_account = models.ForeignKey('FKAccount', on_delete=models.CASCADE, null=True)
     logo = models.FileField('Logo', storage=OverrideFileSystemStorageImg(), upload_to=logo_storage, null=True, max_length=200, blank=True)
     payroll_filename = ArrayField(models.CharField(max_length=10, null=True), null=True, default=list)
@@ -87,16 +101,11 @@ class Business(Account):
     def __str__(self):
         return '%s (%s)' % (self.name, self.taxpayer_id)
 
-
     def get_logo(self):
-        if self.logo:
-            return self.logo.url
-        return '/static/img/sin-logo.jpg'
+        return self.logo.url if self.logo else '/static/img/sin-logo.jpg'
 
     def get_fk_account(self):
         return self.finkok_account.username, self.finkok_account.password
-
-
 
 class FKAccount(models.Model):
     username = models.CharField(max_length=50)
@@ -108,19 +117,17 @@ class FKAccount(models.Model):
         return '%s' % (self.username)
 
 
+#############
 
-
-
-
-class Employee(Account):
-    user = models.OneToOneField('users.User', null=True)
+class Employee(models.Model):
+    user = models.OneToOneField('users.Profile', null=True, on_delete=models.SET_NULL)
     curp = models.CharField(max_length=20, null=True)
     mbid = models.CharField(max_length=30, null=True)
     department = models.CharField(max_length=250, null=True)
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, null=True)
-    businesses = models.ManyToManyField(Business, related_name='employee_businesses')
+    business = models.ForeignKey('Business', on_delete=models.CASCADE, null=True)
+    businesses = models.ManyToManyField('Business', related_name='employee_businesses')
     name = models.CharField(max_length=250, null=True)
-    taxpayer_id = models.CharField(max_length=14)
+    taxpayer_id = models.CharField(max_length=14, unique=True)
     bank = models.CharField(max_length=20, null=True)
     bank_account = models.CharField(max_length=20, null=True)
     modified = models.DateTimeField(null=True, auto_now=True)
@@ -131,7 +138,7 @@ class Employee(Account):
     contract_type = models.CharField(choices=CONTRACT_TYPE, default='01', max_length=2, null=True)
     working_type = models.CharField(choices=WORKING_TYPE, default='01', max_length=2, null=True)
     regime_type = models.CharField(choices=REGIMEN_TYPE, default='02', max_length=2, null=True)
-    department = models.CharField(max_length=150, null=True)
+    department = models.CharField(max_length=150, null=True)  # Esta línea parece duplicada, puedes eliminarla
     position = models.CharField(max_length=100, null=True)
     risk = models.CharField(choices=RISK_TYPE, default='1', max_length=2, null=True)
     periodicity = models.CharField(choices=PERIODICITY_TYPE, default='04', max_length=2, null=True)
@@ -144,13 +151,13 @@ class Employee(Account):
 
     class Meta:
         ordering = ['taxpayer_id']
-        unique_together = (('business', 'taxpayer_id'))
+        unique_together = (('business', 'taxpayer_id'),)
         indexes = [
             models.Index(fields=['taxpayer_id', ]),
         ]
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.taxpayer_id)
+        return f"{self.name} ({self.taxpayer_id})"
 
     def get_emails(self):
         return ", ".join(self.emails)
@@ -172,22 +179,23 @@ class Employee(Account):
             msg.content_subtype = "html"
             msg.send()
 
-            print('Accesos enviados correctamente a: {} ({})'.format(self.name, self.taxpayer_id))
+            print(f'Accesos enviados correctamente a: {self.name} ({self.taxpayer_id})')
 
         except Exception as e:
-            print("Exception in send_register_email => {} => {}".format(email, str(e)))
+            print(f"Exception in send_register_email => {email} => {str(e)}")
 
     def get_path_state_municipality(self):
-        return '%s/%s' % (self.state, self.municipality)
-
+        return f'{self.state}/{self.municipality}'
 
 
 class SatFile(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    business = models.ForeignKey('Business', on_delete=models.CASCADE)
     serial_number = models.CharField(max_length=20, null=True)
     status = models.CharField(choices=CSD_STATUS, default='A', max_length=1)
-    cer_file = models.FileField('Cer', storage=OverrideFileSystemStorage(), upload_to=satfile_storage, null=True, max_length=200, blank=True)
-    key_file = models.FileField('Key', storage=OverrideFileSystemStorage(), upload_to=satfile_storage, null=True, max_length=200, blank=True)
+    cer_file = models.FileField('Cer', storage=OverrideFileSystemStorage(), upload_to=satfile_storage, null=True,
+                                max_length=200, blank=True)
+    key_file = models.FileField('Key', storage=OverrideFileSystemStorage(), upload_to=satfile_storage, null=True,
+                                max_length=200, blank=True)
     passphrase = models.CharField(max_length=256, null=True)
     default = models.BooleanField(default=False)
 
@@ -197,7 +205,7 @@ class News(models.Model):
     description = models.CharField(max_length=128)
     read = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, null=True)
+    business = models.ForeignKey('Business', on_delete=models.CASCADE, null=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
 
 
@@ -213,24 +221,20 @@ class Address(models.Model):
     internal_number = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=15, default='', null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return (
-            u'%s %s %s, %s, %s, %s, %s' %
-            (
-                self.street, self.external_number, self.internal_number,
-                self.zipcode, self.municipality, self.state,
-                self.country
-            )
+            f'{self.street} {self.external_number} {self.internal_number}, {self.zipcode}, '
+            f'{self.municipality}, {self.state}, {self.country}'
         )
 
-
+###########
 
 class PayRoll(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, null=True)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
+    business = models.ForeignKey("Business", on_delete=models.CASCADE, null=True)
+    employee = models.ForeignKey("Employee", on_delete=models.CASCADE, null=True)
     filename = models.CharField(max_length=255, null=True)
-    upload = models.ForeignKey('Upload', on_delete=models.CASCADE, null=True)
-    version = models.CharField(max_length=5, default='3.3')
+    upload = models.ForeignKey("Upload", on_delete=models.CASCADE, null=True)
+    version = models.CharField(max_length=5, default="3.3")
     taxpayer_id = models.CharField(max_length=20, null=True)
     name = models.CharField(max_length=250, null=True)
     rtaxpayer_id = models.CharField(max_length=15, null=True)
@@ -244,14 +248,14 @@ class PayRoll(models.Model):
     subtotal = models.DecimalField(max_digits=24, decimal_places=6, default=0.0)
     total = models.DecimalField(max_digits=24, decimal_places=6, default=0.0)
     discount = models.DecimalField(max_digits=24, decimal_places=6, default=0.0)
-    status = models.CharField(choices=INVOICE_STATUS, default='P', max_length=1)
-    status_sat = models.CharField(max_length=1, choices=INVOICE_STATUS_SAT, default='V')
-    payment_way = models.CharField(choices=PAYMENT_WAY, default='01', max_length=10, null=True)
-    payment_method = models.CharField(choices=PAYMENT_METHOD, default='PUE', max_length=10, null=True)
-    _xml = models.FileField(storage=OverrideFileSystemStorage(), upload_to='%Y/%m/%d/%H/', null=True, db_column='xml')
-    _pdf = models.FileField(storage=OverrideFileSystemStorage(), upload_to='%Y/%m/%d/%H/', null=True, db_column='pdf')
-    _txt = models.FileField('Txt', storage=OverrideFileSystemStorage(), upload_to=txt_storage, null=True, db_column='txt')
-    sign = models.FileField('Sign', storage=OverrideFileSystemStorage(), upload_to=signed_storage, null=True, max_length=200, blank=True)
+    status = models.CharField(choices=INVOICE_STATUS, default="P", max_length=1)
+    status_sat = models.CharField(max_length=1, choices=INVOICE_STATUS_SAT, default="V")
+    payment_way = models.CharField(choices=PAYMENT_WAY, default="01", max_length=10, null=True)
+    payment_method = models.CharField(choices=PAYMENT_METHOD, default="PUE", max_length=10, null=True)
+    _xml = models.FileField(storage=OverrideFileSystemStorage(), upload_to="%Y/%m/%d/%H/", null=True, db_column="xml")
+    _pdf = models.FileField(storage=OverrideFileSystemStorage(), upload_to="%Y/%m/%d/%H/", null=True, db_column="pdf")
+    _txt = models.FileField("Txt", storage=OverrideFileSystemStorage(), upload_to=txt_storage, null=True, db_column="txt")
+    sign = models.FileField("Sign", storage=OverrideFileSystemStorage(), upload_to=signed_storage, null=True, max_length=200, blank=True)
     signed = models.BooleanField(default=False)
     notes = models.TextField(null=True)
     payroll_num = models.PositiveSmallIntegerField(default=1)
@@ -260,7 +264,7 @@ class PayRoll(models.Model):
     total_oth = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     observations = models.TextField(null=True)
     relation_type = models.CharField(choices=RELATION_TYPE, null=True, default=None, max_length=2)
-    relation_lst = ArrayField(models.CharField(max_length=40, null=True), null=True, default=[])
+    relation_lst = ArrayField(models.CharField(max_length=40, null=True), null=True, default=list)
     last_status_sat = models.DateTimeField(auto_now_add=True, db_index=True)
     business_number = models.CharField(max_length=30, null=True)
     period = models.CharField(max_length=15, null=True)
@@ -270,110 +274,105 @@ class PayRoll(models.Model):
     def __str__(self):
         if self.status == "S":
             return self.uuid
-        else:
-            return "Serie:{} - Folio:{}".format(self.serial, self.folio)
+        return "Serie:{} - Folio:{}".format(self.serial, self.folio)
 
     class Meta:
-        index_together = [['business', 'emission_date'], ['business', 'rtaxpayer_id']]
-        unique_together = [['uuid', ], ['business', 'serial', 'folio']]
-        ordering = ['-emission_date']
+        index_together = [["business", "emission_date"], ["business", "rtaxpayer_id"]]
+        unique_together = [["uuid", ], ["business", "serial", "folio"]]
+        ordering = ["-emission_date"]
         indexes = [
-            models.Index(fields=['taxpayer_id', ]),
-            models.Index(fields=['uuid', ]),
-            models.Index(fields=['status', ]),
+            models.Index(fields=["taxpayer_id"]),
+            models.Index(fields=["uuid"]),
+            models.Index(fields=["status"]),
         ]
 
     @property
     def xml(self):
-        xml_string = self._xml.read()
-        try:
-            xml_string = xml_string.encode('utf-8')
-        except:
-            pass
-        finally:
-            self._xml.seek(0)
-        return xml_string
+        with self._xml.open("rb") as xml_file:
+            xml_string = xml_file.read()
+            try:
+                xml_string = xml_string.encode("utf-8")
+            except Exception:
+                pass
+            return xml_string
 
     @xml.setter
     def xml(self, value):
-        name = self.filename
-        if self.filename is None:
-            name = self.uuid
-        else:
-            name = self.filename.replace('txt', 'xml')
-        content_file = ContentFile(value, name=name)
+        name = self.filename or self.uuid
+        content_file = ContentFile(value, name=name.replace("txt", "xml"))
         self._xml.save(content_file.name, content_file, save=True)
 
     @property
     def txt(self):
-        txt_string = self._txt.read()
-        try:
-            txt_string = txt_string.encode('utf-8')
-        except:
-            pass
-        finally:
-            self._txt.seek(0)
-        return txt_string
+        with self._txt.open("rb") as txt_file:
+            txt_string = txt_file.read()
+            try:
+                txt_string = txt_string.encode("utf-8")
+            except Exception:
+                pass
+            return txt_string
 
     @txt.setter
     def txt(self, value):
-        content_file = ContentFile(value, name='%s.txt' % self.filename)
+        content_file = ContentFile(value, name="%s.txt" % self.filename)
         self._txt.save(content_file.name, content_file, save=True)
 
     def xml_etree(self):
-        from lxml import etree
         xml_string = self.xml
         return etree.fromstring(xml_string)
 
     def get_satquery_str(self):
-        return '?re={}&rr={}&tt={:017f}&id={}'.format(self.taxpayer_id.replace('&', '&amp;'), self.rtaxpayer_id.replace('&', '&amp;'), float(self.total), self.uuid)
+        return "?re={}&rr={}&tt={:017f}&id={}".format(
+            self.taxpayer_id.replace("&", "&amp;"),
+            self.rtaxpayer_id.replace("&", "&amp;"),
+            float(self.total),
+            self.uuid,
+        )
+
+    def get_total(self, field):
+        result_sum = self.details.aggregate(sum=Sum(field))["sum"]
+        if result_sum is not None:
+            setattr(self, field, result_sum)
+            self.save()
+        return result_sum if result_sum is not None else 0.00
 
     def get_total_per(self):
-        result_sum = self.details.aggregate(sum=models.Sum('total_per'))['sum']
-        if result_sum is not None:
-            self.total_per = result_sum
-            self.save()
-        return result_sum if result_sum is not None else 0.00
+        return self.get_total("total_per")
 
     def get_total_ded(self):
-        result_sum = self.details.aggregate(sum=models.Sum('total_ded'))['sum']
-        if result_sum is not None:
-            self.total_ded = result_sum
-            self.save()
-        return result_sum if result_sum is not None else 0.00
+        return self.get_total("total_ded")
 
     def get_total_oth(self):
-        result_sum = self.details.aggregate(sum=models.Sum('total_oth'))['sum']
-        if result_sum is not None:
-            self.total_oth = result_sum
-            self.save()
-        return result_sum if result_sum is not None else 0.00
+        return self.get_total("total_oth")
 
     def reset(self):
         self.details.all().delete()
 
     def send_mail(self):
-        from app.core.utils import CreatePDF
         success = False
         try:
-            if self.status == 'S' and ((self.employee and self.employee.email) or (self.business.id in (94,) and self.email)):
-                result_pdf = CreatePDF(xml_path=self._xml.path, filename=self.filename, business_number=self.details.first().business_number)
+            if self.status == "S" and (
+                (self.employee and self.employee.email) or (self.business.id in (94,) and self.email)
+            ):
+                result_pdf = CreatePDF(
+                    xml_path=self._xml.path, filename=self.filename, business_number=self.details.first().business_number
+                )
                 if not result_pdf.success:
                     raise Exception("Error al crear PDF")
 
-                filenamepdf = '/tmp/%s' % (self.filename.replace('txt', 'pdf'))
-                subject = u'Envio de Comprobante Fiscal de Nómina'
+                filenamepdf = "/tmp/%s" % (self.filename.replace("txt", "pdf"))
+                subject = u"Envio de Comprobante Fiscal de Nómina"
                 from_email = settings.DEFAULT_FROM_EMAIL
                 extra_dic = {
-                    'receiver_name':self.rname,
-                    'emision_date':self.emission_date,
-                    'uuid':self.uuid,
-                    'issuces_name':self.name,
-                    'taxpayer_id':self.taxpayer_id,
-                    'rtaxpayer_id':self.rtaxpayer_id
+                    "receiver_name": self.rname,
+                    "emision_date": self.emission_date,
+                    "uuid": self.uuid,
+                    "issuces_name": self.name,
+                    "taxpayer_id": self.taxpayer_id,
+                    "rtaxpayer_id": self.rtaxpayer_id,
                 }
 
-                html_content = render_to_string('invoices/send_cfdi.html', extra_dic)
+                html_content = render_to_string("invoices/send_cfdi.html", extra_dic)
 
                 if self.business.id in (94,):
                     emails_send = [self.email]
@@ -383,51 +382,51 @@ class PayRoll(models.Model):
                 msg = EmailMessage(subject, html_content, from_email, emails_send)
                 msg.content_subtype = "html"
                 if self.business.send_mail_encryption:
-                  zip_path = '{}{}'.format(settings.PATH_REPORTS_TMP, self.filename.replace('txt', 'zip'))
-                  pyminizip.compress_multiple([self._xml.path, filenamepdf], ['', ''], zip_path, self.business.password, 5)
-                  msg.attach_file(zip_path)
-                  msg.send()
-                  os.remove(zip_path)
-                  os.remove(filenamepdf)
+                    zip_path = "{}{}".format(settings.PATH_REPORTS_TMP, self.filename.replace("txt", "zip"))
+                    pyminizip.compress_multiple([self._xml.path, filenamepdf], ["", ""], zip_path, self.business.password, 5)
+                    msg.attach_file(zip_path)
+                    msg.send()
+                    os.remove(zip_path)
+                    os.remove(filenamepdf)
                 else:
-                  msg.attach_file(self._xml.path)
-                  msg.attach_file(filenamepdf)
-                  smtp_response = msg.send()
-                  if smtp_response == 1:
-                    if self.business.id not in (94,):
-                        self.email = self.employee.email[0]
-                        self.save()
-                    print('Correo Enviado satisfactoriamente => Emisor:{} => UUID:{} => Emails:{}'.format(self.taxpayer_id, self.uuid, emails_send))
-                    success = True
-                  os.remove(filenamepdf)
+                    msg.attach_file(self._xml.path)
+                    msg.attach_file(filenamepdf)
+                    smtp_response = msg.send()
+                    if smtp_response == 1:
+                        if self.business.id not in (94,):
+                            self.email = self.employee.email[0]
+                            self.save()
+                        print(
+                            "Correo Enviado satisfactoriamente => Emisor:{} => UUID:{} => Emails:{}".format(
+                                self.taxpayer_id, self.uuid, emails_send
+                            )
+                        )
+                        success = True
+                    os.remove(filenamepdf)
         except Exception as e:
             print("Exception in send_mail => {}".format(str(e)))
         return success
 
     def get_filename(self):
-        return '%s-%s-%s-%s-%s' % (
-            self.rtaxpayer_id,
-            self.employee.mbid,
-            self.details.filter()[0].departament,
-            self.details.filter()[0].paid_date_from,
-            self.details.filter()[0].paid_date_to,
+        details_first = self.details.first()
+        return "{}-{}-{}-{}-{}".format(
+            self.rtaxpayer_id, details_first.mbid, details_first.departament, details_first.paid_date_from, details_first.paid_date_to
         )
 
     def get_xml(self):
         response, client = FinkokWS.get_xml(self.uuid, self.taxpayer_id)
-        if hasattr(response, 'xml') and response['xml']:
-            self.xml = response['xml'].encode('utf8')
+        if hasattr(response, "xml") and response["xml"]:
+            self.xml = response["xml"].encode("utf8")
             self.save()
-            print("XMl:{} saved seccessfuly".format(self.uuid))
+            print("XMl:{} saved successfully".format(self.uuid))
 
     def get_path_xml_employee(self):
-        path = 'SIN_LUGAR_DE_PAGO'
         try:
-            path = '%s/%s' % (self.employee.get_path_state_municipality(), os.path.basename(self._xml.path))
-        except:
-            path = 'SIN_LUGAR_DE_PAGO/%s' % (os.path.basename(self._xml.path))
-        return  path
-
+            path = "{}/{}".format(self.employee.get_path_state_municipality(), os.path.basename(self._xml.path))
+        except Exception:
+            path = "SIN_LUGAR_DE_PAGO/{}".format(os.path.basename(self._xml.path))
+        return path
+########################################3
 class PayRollDetail(models.Model):
     payroll = models.ForeignKey(PayRoll, related_name='details', on_delete=models.CASCADE)
     version = models.CharField(max_length=5, default='1.2')
@@ -442,11 +441,11 @@ class PayRollDetail(models.Model):
     total_per = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     total_ded = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     total_oth = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    perceptions_json = JSONField(null=True)
-    deductions_json = JSONField(null=True)
+    perceptions_json = models.JSONField(null=True)
+    deductions_json = models.JSONField(null=True)
     registropatronal = models.CharField(max_length=30, null=True)
-    retirement = JSONField(null=True)
-    separation = JSONField(null=True)
+    retirement = models.JSONField(null=True)
+    separation = models.JSONField(null=True)
 
     def get_total_per(self, ptype='gravado'):
         if ptype == 'gravado':
@@ -569,8 +568,6 @@ class PayRollDetail(models.Model):
             models.Index(fields=['business_number', ]),
         ]
 
-
-
 class Perception(models.Model):
     payroll = models.ForeignKey(PayRollDetail, related_name='perceptions', on_delete=models.CASCADE)
     type = models.CharField(choices=PERCEPTION_TYPE, max_length=3)
@@ -578,11 +575,7 @@ class Perception(models.Model):
     concept = models.CharField(max_length=150, null=True)
     amount_exp = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
     amount_grav = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
-    extra_hrs = JSONField(null=True)
-
-
-
-
+    extra_hrs = models.JSONField(null=True)
 
 class Deduction(models.Model):
     payroll = models.ForeignKey(PayRollDetail, related_name='deductions', on_delete=models.CASCADE)
@@ -590,9 +583,6 @@ class Deduction(models.Model):
     code = models.CharField(max_length=15, null=True)
     concept = models.CharField(max_length=150, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
-
-
-
 
 class OtherPayment(models.Model):
     payroll = models.ForeignKey(PayRollDetail, related_name='otherpayments', on_delete=models.CASCADE)
@@ -602,20 +592,14 @@ class OtherPayment(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
 
 
-
-
-
 class Inability(models.Model):
     payroll = models.ForeignKey(PayRollDetail, related_name='inabilities', on_delete=models.CASCADE)
     type = models.CharField(choices=INABILITY_TYPE, max_length=3)
     days = models.IntegerField(null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
 
-
-
-
 class Notifications(models.Model):
-    invoice = models.ForeignKey(PayRoll, null=True)
+    invoice = models.ForeignKey(PayRoll, null=True, on_delete=models.CASCADE,)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
     business = models.ForeignKey(Business, on_delete=models.CASCADE, null=True)
     title = models.TextField(default='')
@@ -628,8 +612,8 @@ class Notifications(models.Model):
 
 
 class History(models.Model):
-    business = models.ForeignKey(Business, null=True)
-    employee = models.ForeignKey(Employee, null=True)
+    business = models.ForeignKey(Business, null=True, on_delete=models.CASCADE,)
+    employee = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE,)
     date = models.DateTimeField(null=True, auto_now_add=True)
     totales_files = models.IntegerField(null=True)
     failed_files = models.IntegerField(null=True,)
@@ -637,7 +621,7 @@ class History(models.Model):
 
 
 class DetailsHistory(models.Model):
-    history = models.ForeignKey(History, null=True)
+    history = models.ForeignKey(History, null=True, on_delete=models.CASCADE,)
     name = models.TextField(max_length=50, null=True, blank=True)
     uuid = models.TextField(max_length=36, null=True, blank=True)
     status = models.CharField(max_length=1, choices=HISTORY_STATUS, default='R')
@@ -646,15 +630,11 @@ class DetailsHistory(models.Model):
 
 class TokensUser(models.Model):
     token = models.TextField(null=False)
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-
-
-
-
+    user = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
 
 class Upload(models.Model):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    business = models.ForeignKey(Business, null=True)
+    user = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+    business = models.ForeignKey(Business, null=True, on_delete=models.CASCADE,)
     name = models.TextField(max_length=150, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     file = models.FileField('Zip', storage=OverrideFileSystemStorage(), upload_to=zip_storage, null=True, max_length=200, blank=True)
@@ -798,14 +778,6 @@ class Upload(models.Model):
             print('Error: {}'.format(str(e)))
 
 
-REPORT_TASKS_STATUS = (
-    ('P', 'Pending'),
-    ('I', 'In Process'),
-    ('F', 'Failed'),
-    ('C', 'Completed'),
-    ('D', 'downloaded'),
-)
-
 class PayrollReport(models.Model):
     business = models.ForeignKey(Business, null=True, on_delete=models.CASCADE)
     employee = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE)
@@ -819,46 +791,46 @@ class PayrollReport(models.Model):
     notes = models.TextField(null=True)
 
     def __str__(self):
-        return '%s (%s)' % (self.business, self.id)
+        return f"{self.business} ({self.id})"  # Use f-strings for formatting
 
-    def create_only_pdf(self):
-        from .tasks import create_zip_invoices_pdf
-        self.set_encrypted_password()
-        account = self.business
-        role = account.user.first().role
-        create_zip_invoices_tasks = create_zip_invoices_pdf.apply_async((self.id,),)
-        return create_zip_invoices_tasks
-
-    def create_payroll_zip(self, split_path=False):
-        from .tasks import create_zip_invoices
-        role = None
-        account = None
-
-        if self.business is not None:
-          account = self.business
-          role = account.user.first().role
-        elif self.employee is not None:
-          account = self.employee
-          role = 'E'
-
-        self.set_encrypted_password()
-        create_zip_invoices_tasks = create_zip_invoices.apply_async((self.id, account.id, self.invoices_ids, role, split_path),)
-        return create_zip_invoices_tasks.id
+    #def create_only_pdf(self):
+    #    self.set_encrypted_password()
+    #    account = self.business
+    #    role = account.user.first().role
+    #    create_zip_invoices_tasks = create_zip_invoices_pdf.apply_async((self.id,))  # Remove extra comma
+    #    return create_zip_invoices_tasks
+#
+    #def create_payroll_zip(self, split_path=False):
+    #    role = None
+    #    account = None
+#
+    #    if self.business is not None:
+    #        account = self.business
+    #        role = account.user.first().role
+    #    elif self.employee is not None:
+    #        account = self.employee
+    #        role = 'E'
+#
+    #    self.set_encrypted_password()
+    #    create_zip_invoices_tasks = create_zip_invoices.apply_async(
+    #        (self.id, account.id, self.invoices_ids, role, split_path)
+    #    )  # Remove extra comma
+    #    return create_zip_invoices_tasks.id
 
     def generate_password(self, length=24):
-        letters = string.ascii_letters + string.ascii_uppercase + string.digits + string.punctuation
-        result_str = ''.join(random.choice(letters) for i in range(length))
+        letters = string.ascii_letters + string.digits + string.punctuation  # Removed ascii_uppercase (duplicate)
+        result_str = ''.join(choices(letters, k=length))  # Use choices for efficient random selection
         return result_str
 
     def set_encrypted_password(self):
-        self.password = signing.dumps(self.generate_password())
+        self.password = signer.sign(self.generate_password())  # Use signer for consistent signing/unsigning
         self.save()
 
     def get_decrypted_password(self):
-        return signing.loads(self.password)
+        return signer.unsign(self.password)  # Use signer for consistent signing/unsigning
 
     def get_encrypted_id(self):
-        return signing.dumps(self.id)
+        return signer.sign(self.id)  # Use signer for consistent signing/unsigning
 
     def get_file_name(self):
         return os.path.basename(self.file.path)
