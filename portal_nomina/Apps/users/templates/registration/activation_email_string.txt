@@ -1,0 +1,7 @@
+EEl proveedor con el rfc {{ taxpayer_id }} desea que lo actives, puedes activarlo 
+desde el portal {{ site }} o &iexcl;No piertas tiempo! da clic al siguiente
+enlace {{ activation_url }}
+
+--
+Saludos Cordiales,
+SeguroProveedor

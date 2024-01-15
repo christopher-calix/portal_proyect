@@ -16,6 +16,7 @@
             Login into account
           </h4>
           <form class="form-box px-3">
+                  {% csrf_token %}    
             <div class="form-input">
               <span><i class="fa fa-envelope-o"></i></span>
               <input type="email" name="" placeholder="Email Address" tabindex="10" required>
