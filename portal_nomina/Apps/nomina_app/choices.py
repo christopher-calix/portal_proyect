@@ -3,6 +3,8 @@
 This file keep all the choices cases, 
 """
 
+##      MODELS.APPS.NOMINA_APP      ########
+
 ROVIDER_STATUS = (
     ('P', 'Pending'),
     ('A', 'Accepted'),
@@ -624,3 +626,81 @@ TASKS_STATUS = (
     (2, 'Completed'),
     (3, 'Failed'),
 )
+
+
+######          MONEDA.PY CHOICES           #############
+
+
+
+MONEDA_SINGULAR = 'pesos'
+MONEDA_PLURAL = 'pesos'
+
+CENTIMOS_SINGULAR = 'centavo'
+CENTIMOS_PLURAL = 'centavos'
+
+MAX_NUMERO = 999999999999
+
+UNIDADES = (
+    'CERO',
+    'UNO',
+    'DOS',
+    'TRES',
+    'CUATRO',
+    'CINCO',
+    'SEIS',
+    'SIETE',
+    'OCHO',
+    'NUEVE'
+)
+
+DECENAS = (
+    'DIEZ',
+    'ONCE',
+    'DOCE',
+    'TRECE',
+    'CATORCE',
+    'QUINCE',
+    'DIECISEIS',
+    'DIECISIETE',
+    'DIECIOCHO',
+    'DIECINUEVE'
+)
+
+DIEZ_DIEZ = (
+    'CERO',
+    'DIEZ',
+    'VEINTE',
+    'TREINTA',
+    'CUARENTA',
+    'CINCUENTA',
+    'SESENTA',
+    'SETENTA',
+    'OCHENTA',
+    'NOVENTA'
+)
+
+CIENTOS = (
+    '_',
+    'CIENTO',
+    'DOSCIENTOS',
+    'TRESCIENTOS',
+    'CUATROCIENTOS',
+    'QUINIENTOS',
+    'SEISCIENTOS',
+    'SETENCIENTOS',
+    'OCHOCIENTOS',
+    'NOVECIENTOS'
+)
+
+#####       DECORATORS.PY   ########
+
+
+INVOICE_STATUS = {
+  'N': u'En proceso de validacion', 
+  'R': u'Rechazado',
+  'V': u'Válido', 
+  'E': u'Pendiente de pago', 
+  'F': u'Pagado',
+  'C': u'Comprobante Cancelado',
+  'A': u'Todos'
+}
