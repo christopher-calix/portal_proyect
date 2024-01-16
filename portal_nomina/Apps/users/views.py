@@ -1,4 +1,6 @@
 
+import base64
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
@@ -8,15 +10,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic.base import TemplateView
-
-from Apps.nomina_app.models import Account
-
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import JsonResponse, Http404
 from django.shortcuts import redirect
 from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 
 from django.urls import reverse_lazy
@@ -25,7 +24,6 @@ from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
 
 
-import base64
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponseRedirect, JsonResponse
@@ -37,9 +35,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-
-
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -49,6 +44,10 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.views.generic import FormView
 from django.utils.encoding import force_str
+
+##MODELS
+from Apps.nomina_app.models import Account
+
 
 from django.utils.http import urlsafe_base64_encode
 #from django.utils.six.moves.urllib.parse import urlencode
@@ -60,24 +59,24 @@ User = get_user_model()
 
 
 
-
-
 def index(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('dashboard'))
+        return HttpResponseRedirect(reverse('nomina_app:dashboard'))
     return render(request, 'auth/login.html')
 
-#@csrf_exempt
-#class index(View):
+#class Index(LoginRequiredMixin, TemplateView):
 #    template_name = 'auth/login.html'
 #
-#    def get(self, request, *args, **kwargs):
-#        return render(request, self.template_name)
+#    def dispatch(self, request, *args, **kwargs):
+#        if request.user.is_authenticated:
+#            return redirect(reverse_lazy('dashboard'))
+#        return super().dispatch(request, *args, **kwargs)
 
 class LoginView(View):
-    http_method_names = ['POST']
+    #   http_method_names = ['POST']
 
     def post(self, request):
+        import pdb; pdb.set_trace() 
         username = request.POST.get('username')
         password = request.POST.get('password')
 

@@ -211,5 +211,6 @@ if DEBUG:
 SESSION_COOKIE_AGE = 1500000
 
 VALIDATE_CFDI = False
+
 USERNAME_FK = 'ccalix@finkok.com.mx'
 PASSWORD_FK = 'Legoland1953!'

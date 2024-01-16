@@ -29,7 +29,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/usuarios/login/',
+            url: '/users/login/',
             data: formData,
             dataType: 'json',
             cache: false,
