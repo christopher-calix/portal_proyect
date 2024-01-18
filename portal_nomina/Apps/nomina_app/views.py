@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
+from .views_choices import *
 
 from django.contrib.auth.decorators import login_required
 

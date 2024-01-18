@@ -692,15 +692,3 @@ CIENTOS = (
     'NOVECIENTOS'
 )
 
-#####       DECORATORS.PY   ########
-
-
-INVOICE_STATUS = {
-  'N': u'En proceso de validacion', 
-  'R': u'Rechazado',
-  'V': u'Válido', 
-  'E': u'Pendiente de pago', 
-  'F': u'Pagado',
-  'C': u'Comprobante Cancelado',
-  'A': u'Todos'
-}

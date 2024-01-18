@@ -5,7 +5,7 @@ from django.db import models
 from django.shortcuts import render
 from django.http import HttpResponse
 import datetime
-from .choices import *
+from .models_choices import *
 from Apps.nomina_app.utils import CreatePDF
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
@@ -426,7 +426,7 @@ class PayRoll(models.Model):
         except Exception:
             path = "SIN_LUGAR_DE_PAGO/{}".format(os.path.basename(self._xml.path))
         return path
-########################################3
+    
 class PayRollDetail(models.Model):
     payroll = models.ForeignKey(PayRoll, related_name='details', on_delete=models.CASCADE)
     version = models.CharField(max_length=5, default='1.2')

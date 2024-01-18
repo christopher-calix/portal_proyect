@@ -76,7 +76,7 @@ class LoginView(View):
     #   http_method_names = ['POST']
 
     def post(self, request):
-        import pdb; pdb.set_trace() 
+        
         username = request.POST.get('username')
         password = request.POST.get('password')
 
