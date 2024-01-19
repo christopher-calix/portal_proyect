@@ -1,0 +1,233 @@
+[
+    {
+        "fields": {
+            "address": 1,
+            "cer": "",
+            "date_joined": "2019-11-25T17:26:55.924",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": null,
+            "key": "",
+            "last_name": null,
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": null,
+            "second_last_name": null,
+            "serial": null,
+            "taxpayer_id": null,
+            "user": 1
+        },
+        "model": "core.account",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "address": null,
+            "cer": "",
+            "date_joined": "2019-11-25T17:29:33.061",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "EKU9003173C9 S,A. DE C.V.",
+            "key": "",
+            "last_name": null,
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": null,
+            "second_last_name": null,
+            "serial": null,
+            "taxpayer_id": "EKU9003173C9",
+            "user": 2
+        },
+        "model": "core.account",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "address": 4,
+            "cer": "satfiles/24/38/30001000000400002438.cer",
+            "date_joined": "2019-11-26T12:33:22.894",
+            "finkok_account": "maja_raga92@hotmail.com",
+            "finkok_password": "J4n3TT.demo",
+            "first_name": "IVD920810GU2 S.A de C.V",
+            "key": "satfiles/24/38/30001000000400002438.key",
+            "last_name": null,
+            "logo": "logo/IVD920810GU2/IVD920810GU2.jpg",
+            "passphrase": "12345678a",
+            "pattern_taxpayer": null,
+            "second_last_name": null,
+            "serial": "30001000000400002438",
+            "taxpayer_id": "IVD920810GU2",
+            "user": 3
+        },
+        "model": "core.account",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "address": 5,
+            "cer": "satfiles/24/47/30001000000400002447.cer",
+            "date_joined": "2019-11-27T12:08:39.298",
+            "finkok_account": "vanne.vi.g@gmail.com",
+            "finkok_password": "vaneGRANCIANO28_",
+            "first_name": "Inteligencia informática Aválos",
+            "key": "satfiles/24/47/30001000000400002447.key",
+            "last_name": null,
+            "logo": "logo/IIA040805DZ4/IIA040805DZ4.jpg",
+            "passphrase": "12345678a",
+            "pattern_taxpayer": null,
+            "second_last_name": null,
+            "serial": "30001000000400002447",
+            "taxpayer_id": "IIA040805DZ4",
+            "user": 4
+        },
+        "model": "core.account",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "address": 2,
+            "cer": "",
+            "date_joined": "2019-11-25T18:06:09.417",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "Xochitl",
+            "key": "",
+            "last_name": "Quiroz",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IVD920810GU2",
+            "second_last_name": "Baca",
+            "serial": null,
+            "taxpayer_id": "XIQB891116QE4",
+            "user": 5
+        },
+        "model": "core.account",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "address": 3,
+            "cer": "",
+            "date_joined": "2019-11-25T18:29:52.905",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "Carlos",
+            "key": "",
+            "last_name": "Miranda",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IIA040805DZ4",
+            "second_last_name": "Solis",
+            "serial": null,
+            "taxpayer_id": "MISC491214B86",
+            "user": 6
+        },
+        "model": "core.account",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "address": 6,
+            "cer": "",
+            "date_joined": "2019-11-26T17:42:25.438",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "Ines",
+            "key": "",
+            "last_name": "Lirio",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IIA040805DZ4",
+            "second_last_name": "Ñañez",
+            "serial": null,
+            "taxpayer_id": "LIÑI920228KS8",
+            "user": 7
+        },
+        "model": "core.account",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "address": 7,
+            "cer": "",
+            "date_joined": "2019-11-27T09:21:26.225",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "Oscar",
+            "key": "",
+            "last_name": "KALA",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IVD920810GU2",
+            "second_last_name": "HAAK",
+            "serial": null,
+            "taxpayer_id": "KAHO641101B39",
+            "user": 8
+        },
+        "model": "core.account",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "address": 8,
+            "cer": "",
+            "date_joined": "2019-11-27T10:09:40.698",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "Rafael",
+            "key": "",
+            "last_name": "Kiroz",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IIA040805DZ4",
+            "second_last_name": "Carranza",
+            "serial": null,
+            "taxpayer_id": "KICR630120NX3",
+            "user": 9
+        },
+        "model": "core.account",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "address": 9,
+            "cer": "",
+            "date_joined": "2019-11-27T10:34:38.297",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "ADRIANA",
+            "key": "",
+            "last_name": "JUAREZ",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": null,
+            "second_last_name": "FERNANDEZ",
+            "serial": null,
+            "taxpayer_id": "JUFA7608212V6",
+            "user": 10
+        },
+        "model": "core.account",
+        "pk": 10
+    },
+    {
+        "fields": {
+            "address": 10,
+            "cer": "",
+            "date_joined": "2019-11-27T11:27:53.742",
+            "finkok_account": null,
+            "finkok_password": null,
+            "first_name": "ALBA",
+            "key": "",
+            "last_name": "XKARAJAM",
+            "logo": "",
+            "passphrase": null,
+            "pattern_taxpayer": "IVD920810GU2",
+            "second_last_name": "MENDEZ",
+            "serial": null,
+            "taxpayer_id": "XAMA620210DQ5",
+            "user": 11
+        },
+        "model": "core.account",
+        "pk": 11
+    }
+]

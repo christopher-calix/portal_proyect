@@ -1,0 +1,47 @@
+[
+    {
+        "fields": {
+            "email": "root@finkok.com",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2020-03-31T10:48:25.960",
+            "password": "pbkdf2_sha256$36000$sIHFsxLFJVls$6VoXCFesYikGffHdSiajxk8sWI7L3y8TvrfX1WRYX7o=",
+            "role": "S",
+            "user_permissions": []
+        },
+        "model": "users.user",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "email": "admin@finkok.com",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": false,
+            "last_login": "2020-03-31T10:48:25.960",
+            "password": "pbkdf2_sha256$36000$sIHFsxLFJVls$6VoXCFesYikGffHdSiajxk8sWI7L3y8TvrfX1WRYX7o=",
+            "role": "S",
+            "user_permissions": []
+        },
+        "model": "users.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "email": "EKU9003173C9@finkok.com",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": false,
+            "last_login": "2020-01-21T14:57:09.936",
+            "password": "pbkdf2_sha256$36000$qijuX8R8ckKe$rR0Ysj7LaQgdhcCS35fayksG67L3kFq/7WQACkzZmn8=",
+            "role": "P",
+            "user_permissions": []
+        },
+        "model": "users.user",
+        "pk": 3
+    }
+]

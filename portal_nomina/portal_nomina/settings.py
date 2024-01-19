@@ -192,6 +192,16 @@ FK_USERNAME = 'finkok_test@alfredo.com'
 FK_PASSWORD = 'f1nk0K#17'
 FK_NO_CER = '20001000000300022762'
 
+''' el smtp es 10.0.3.12
+user: proveedor
+passw: g2dMRg99wauf'''
+FK_UTILITIES_URL = 'https://demo-facturacion.finkok.com/servicios/soap/utilities.wsdl'
+FK_REGISTRATION_URL = "https://demo-facturacion.finkok.com/servicios/soap/registration.wsdl"
+NOTIFICATION_ADD_BUSINESS_EMAILS = ["tigreac96@gmail.com"]
+
+
+
+
 
 
 CERTIFICATE_STORAGE = Path(BASE_DIR, 'cfdi', 'sat_certificados')

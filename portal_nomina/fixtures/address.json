@@ -1,0 +1,162 @@
+[
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "country": "Mexico",
+            "external_number": "158963",
+            "internal_number": null,
+            "locality": "Morelia",
+            "municipality": "Morelia",
+            "neighborhood": null,
+            "phone": "66546465323",
+            "state": "Michoacan",
+            "street": "AV. centro",
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "country": "México",
+            "external_number": "10",
+            "internal_number": null,
+            "locality": "Morelia",
+            "municipality": "Morelia",
+            "neighborhood": null,
+            "phone": "4437851269",
+            "state": "Michoacán",
+            "street": "conocida",
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "country": null,
+            "external_number": null,
+            "internal_number": null,
+            "locality": null,
+            "municipality": null,
+            "neighborhood": null,
+            "phone": "",
+            "state": null,
+            "street": null,
+            "zipcode": null
+        },
+        "model": "core.address",
+        "pk": 10
+    }
+]

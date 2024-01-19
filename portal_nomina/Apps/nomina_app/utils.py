@@ -17,7 +17,8 @@ import urllib.request  # Use urllib.request instead of urllib2
 import datetime
 import M2Crypto
 import traceback
-from .models import PayRoll, Account, TokensUser, News, Business, Employee
+from .models import PayRoll
+from .models import  Account, TokensUser, News, Business, Employee
 from lxml import etree
 from xml.dom import minidom
 from io import StringIO  # Use io.StringIO instead of StringIO
@@ -25,7 +26,7 @@ from zeep import Client  # Use zeep instead of suds
 from collections import defaultdict
 import os
 import glob
-from moneda import numero_a_letras
+from .moneda import numero_a_letras
 from lxml import etree
 from datetime import datetime
 from reportlab.pdfgen import canvas
@@ -41,10 +42,11 @@ from reportlab.platypus import (
     TableStyle,
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.pagesizes import landscape, letter, cm
+from reportlab.lib.pagesizes import landscape, letter
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER, TA_JUSTIFY
-from reportlab.lib.units import inch, mm
+from reportlab.lib.units import cm, mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -60,7 +62,7 @@ from PIL import Image as im
 import logging
 from decimal import Decimal
 from lxml import etree as ET
-from django.contrib.staticfiles.templatetags.staticfiles import static
+#from django.contrib.staticfiles.templatetags.staticfiles import static
 try:
     locale.setlocale(locale.LC_ALL, "en_US.utf-8")
 except:
@@ -212,7 +214,7 @@ class SubjectDNValidator(object):
           "success" : True,
           "message" : "The issuer CSD corresponds to RFC sender by proof comes as fiscal invoice"
         }
-    except (Exception, e):
+    except Exception as e:
       self.error = str(e)
       pass
     #print result
@@ -293,7 +295,7 @@ class AmountValidator():
         if self.valid:
           self.check_complements()
 
-    except (Exception, e):
+    except Exception as e:
       self.valid = False
 
   def check_concepts(self):
@@ -622,7 +624,7 @@ class CreatePDF(object):
         else:
           self.incapacidades = False
           pass
-      except (Exception, e):
+      except Exception as e:
         print ("Exception Datos de Nómina => %s" % str(e))
         self.message = "Exception Datos de Nómina => %s" % str(e)
         return
@@ -927,8 +929,7 @@ class CreatePDF(object):
           pos += 1
       
       table_per_ded=Table(per_ded_data, colWidths=[1.2*cm, 6*cm, 2.1*cm, 0.45*cm, 1.2*cm, 6*cm, 2.1*cm], repeatRows=2, style=[
-        #('GRID', (0,0),(-1,-1), 1, colors.black),
-        #('BOX', (0,0),(-1,-1), 1, bg_color),
+        
         ('BACKGROUND', (0,0),(2,0), bg_color),
         ('BACKGROUND', (4,0),(-1,0), bg_color),
         ('SPAN', (0,0),(2,0)), # PERCEPCIONES
@@ -939,15 +940,13 @@ class CreatePDF(object):
         ('LEFTPADDING', (0,0),(-1,-1), 2.5),
         ('TOPPADDING', (0,0),(-1,-1), 0.0),
         ('BOTTOMPADDING', (0,0),(-1,-1), 0.0),
-        # ('BOTTOMPADDING', (0,1),(-1,1), 0.5),
         ('LINEBELOW',(0,1),(2,1), 1, bg_color), # Draw a line below headers PERCEPCIONES
         ('LINEBELOW',(4,1),(-1,1), 1, bg_color), # Draw a line below headers DEDUCCIONES
         ('LINEBELOW',(0,-1),(2,-1), 1, bg_color), # Draw a line after last row PERCEPCIONES
         ('LINEBELOW',(4,-1),(-1,-1), 1, bg_color), # Draw a line after last row DEDUCCIONES
         ('LINEBELOW',(0,"splitlast"),(2,"splitlast"), 1, bg_color),
         ('LINEBELOW',(4,"splitlast"),(-1,"splitlast"), 1, bg_color),
-        # ('BOTTOMPADDING',(0,-1),(-1,-1), 0.5),
-        #('LINEBELOW',(0,"splitlast"),(-1,"splitlast"), 1, colors.gray),
+        
       ])
 
     except Exception as e:
@@ -1145,7 +1144,7 @@ class CreatePDF(object):
      
         ('VALIGN',(0,0),(-1,-1), 'MIDDLE'),
         ('ALIGN',(0,0),(-1,-1), 'CENTER'),
-        #('TOPPADDING',(0,0),(-1,-1), 2.5),
+       
         ('TOPPADDING', (1,0),(-1,0), 0.5),
         ('BOTTOMPADDING', (1,-1),(-1,-1), 1.5),
         
@@ -1174,6 +1173,9 @@ class CreatePDF(object):
       return '.'.join([i, (d+'0'*n)[:n]])
     except Exception as e:
       print( "Exception truncate() | %s" % str(e))
+
+
+
     
 class NumberedCanvas(canvas.Canvas):
   def __init__(self, *args, **kwargs):
@@ -1228,13 +1230,13 @@ def validate_password(password):
         special_letter = True
 
     if not upper_letter:
-      return False, u'Las Contraseñas válidas contienen al menos una letra MAYÚSCULA'
+      return False, 'Las Contraseñas válidas contienen al menos una letra MAYÚSCULA'
     if not lower_letter:
-      return False, u'Las Contraseñas válidas contienen al menos una letra minuscula'
+      return False, 'Las Contraseñas válidas contienen al menos una letra minuscula'
     if not number_letter:
-      return False, u'Las Contraseñas válidas continen al menos un dígito'
+      return False, 'Las Contraseñas válidas continen al menos un dígito'
     if not special_letter:
-      return False, u'Las Contraseñas válidas continen al menos un caracter especial'
+      return False, 'Las Contraseñas válidas continen al menos un caracter especial'
   except Exception as e:
     print ('Exception in validate_password ==> {}'.format(str(e)))
     message = u'Las Contraseñas válidas contienen al menos una letra MAYÚSCULA, un dígito y un caracter especial y deben de ser de 8 caracters como mínimo.'
@@ -1473,7 +1475,7 @@ def send_email(subject, html_url, context, to_email):
     msg.send()
     success = True
     message = 'Correo de invitacion enviado'
-  except (Exception, e):
+  except Exception as e:
     print('Exception in send_email =>', e)
     message = 'Error al enviar correo de invitacion'
 
@@ -1508,7 +1510,7 @@ def send_push(title, message, to_user):
     for token in tokens:
       registration_ids.append(token.token)
     push_service.notify_multiple_devices(registration_ids=registration_ids, message_icon=icon, message_title=title, message_body=message)
-  except (Exception, e):
+  except Exception as e :
     print ('Error in send_push => %s' % e)
 
 def send_bell(title, message, to_role, to_user):
@@ -1519,7 +1521,7 @@ def send_bell(title, message, to_role, to_user):
       News.objects.create(title=title, description=message, employee=to_user)
     else:
       News.objects.create(title=title, description=message)
-  except (Exception, e):
+  except Exception as e:
     print ('Exception in send_bell => %s' % e)
 
 def send_notification(title, message, to_user, emails, html_url, context, to_role='E'):

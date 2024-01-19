@@ -50,26 +50,23 @@ class FinkokWS(object):
 
   @staticmethod
   def stamp(xml_string, attempts=1, business_obj=None):
-    response = None
-    client = None
-    stamp_url = FinkokWS.STAMP_URL
-    # username = FinkokWS.USERNAME
-    # password = FinkokWS.PASSWORD 
-    username, password = business_obj.get_fk_account()
-    print 'El negocio:%s va ha timbrar con las credenciales username:%s password:%s' % (business_obj.taxpayer_id, username, password)
-
-    try:
-      if attempts < 5:
-        client = Client(stamp_url, location=stamp_url, cache=None, timeout=120)
-        response = client.service.sign_stamp(xml_string.encode('base64'), username, password)
-    except Exception as e:
-      print "Exception in FinkokWS[stamp] => {}".format(str(e))
-      errors_timeout = ['time-out', 'timeout', 'timedout', 'timed-out', '504', 'gateway', 'timed out']
-      if any(x in str(e).lower() for x in errors_timeout):
-        attempts += 1
-        response, client = FinkokWS.stamp(xml_string, attempts=attempts, business_obj=business_obj)
-
-    return response, client
+       response = None
+       client = None
+       stamp_url = FinkokWS.STAMP_URL
+       username, password = business_obj.get_fk_account()
+       print('El negocio:{} va ha timbrar con las credenciales username:{} password:{}'.format(
+           business_obj.taxpayer_id, username, password))
+       try:
+           if attempts < 5:
+               client = Client(stamp_url, location=stamp_url, cache=None, timeout=120)
+               response = client.service.sign_stamp(bytes(xml_string, 'utf-8').encode('base64'), username, password)
+       except Exception as e:
+           print("Exception in FinkokWS[stamp] => {}".format(str(e)))
+           errors_timeout = ['time-out', 'timeout', 'timedout', 'timed-out', '504', 'gateway', 'timed out']
+           if any(x in str(e).lower() for x in errors_timeout):
+               attempts += 1
+               response, client = FinkokWS.stamp(xml_string, attempts=attempts, business_obj=business_obj)
+       return response, client
 
   @staticmethod
   def cancel(UUID=None, rfc=None, cer=None, key=None):
@@ -86,7 +83,7 @@ class FinkokWS(object):
       invoices_list.uuids.string = [UUID]
       response = client.service.cancel(invoices_list, username, password, rfc, cer, key, store_p)
     except Exception as e:
-      print "Exception cancel() => %s" % str(e)
+      print ("Exception cancel() => %s" % str(e))
     
     return response, client
 
@@ -122,7 +119,7 @@ class FinkokWS(object):
       )
 
     except Exception as e:
-      print "Exception registration_add() => %s" % str(e)
+      print ("Exception registration_add() => %s" % str(e))
 
     return response, client
   
@@ -139,7 +136,7 @@ class FinkokWS(object):
       response = client.service.get_xml(username, password, uuid, taxpayer_id)
 
     except Exception as e:
-      print "Exception in FinkokWS[stamp] => {}".format(str(e))
+      print ("Exception in FinkokWS[stamp] => {}".format(str(e)))
 
     return response, client
 
@@ -154,7 +151,7 @@ class FinkokWS(object):
       client = Client(inc_url, location=inc_url, cache=None)
       response = client.service.check(taxpayer_id, username, password)
     except Exception as e:
-      print "Exception in FinkokWS[inc] => {}".format(str(e))
+      print ("Exception in FinkokWS[inc] => {}".format(str(e)))
 
     return response, client
 
@@ -182,7 +179,7 @@ class FinkokWS(object):
       client = Client(url, location=url, cache=None)
       response = client.service.report_total(username, password, taxpayer_id, date_from, date_to, 'I')
     except Exception as e:
-      print "Exception in FinkokWS[report_total] => {}".format(str(e))
+      print ("Exception in FinkokWS[report_total] => {}".format(str(e)))
 
     return response, client
 
@@ -218,7 +215,7 @@ class FinkokWS(object):
       response = client.service.edit(username, password, taxpayer_id, status, cer, key, passphrase)
 
     except Exception as e:
-      print "Exception in FinkokWS[edit] => {}".format(str(e))
+      print ("Exception in FinkokWS[edit] => {}".format(str(e)))
 
     return response, client
     
@@ -271,23 +268,6 @@ class FinkokWSRetentions(object):
       invoices_list.uuids.string = [UUID]
       response = client.service.cancel(invoices_list, username, password, rfc, cer, key, store_p)
     except Exception as e:
-      print "Exception cancel() => %s" % str(e)  
+      print ("Exception cancel() => %s" % str(e) ) 
     
     return response, client
-  
-  ''''@staticmethod
-  def get_xml(uuid, taxpayer_id='ACO560518KW7', demo=True):
-    try:
-      utilities_url = FinkokWSRetentions.UTILITIES_URL
-      username = FinkokWSRetentions.USERNAME
-      password = FinkokWSRetentions.PASSWORD
-      if not demo:
-        utilities_url = 'http://demo-facturacion.finkok.com/servicios/soap/utilities.wsdl'
-        username = ''
-        password = ''
-      client = Client(utilities_url, location=utilities_url)
-      response = client.service.get_xml(username, password, uuid, taxpayer_id)
-      return response
-    except Exception as e:
-      logging.error('Get xml Error => %s' % str(e))
-      return '' '''

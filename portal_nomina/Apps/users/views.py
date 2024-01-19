@@ -53,7 +53,7 @@ from django.utils.http import urlsafe_base64_encode
 #from django.utils.six.moves.urllib.parse import urlencode
 
 from .forms.register import UserForm, ActivationForm
-from Apps.nomina_app.utils import generate_activation_key
+
 
 User = get_user_model()
 

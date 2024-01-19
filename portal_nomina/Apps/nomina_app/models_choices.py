@@ -32,21 +32,21 @@ INVOICE_TYPE = (
     ('I', 'Ingreso'),
     ('E', 'Egreso'),
     ('T', 'Traslado'),
-    ('N', u'Nómina'),
+    ('N', 'Nómina'),
     ('P', 'Pago'),
 )
 
 INVOICE_STATUS = (
-    ('P', u'Pending'),
-    ('E', u'Error'),
-    ('C', u'Cancelado'),
-    ('S', u'Stamped'),
+    ('P', 'Pending'),
+    ('E', 'Error'),
+    ('C', 'Cancelado'),
+    ('S', 'Stamped'),
 )
 
 CSD_STATUS = (
-    ('A', u'Activo'),
-    ('C', u'Caducado'),
-    ('R', u'Revocado'),
+    ('A', 'Activo'),
+    ('C', 'Caducado'),
+    ('R', 'Revocado'),
 )
 
 STATUS_ACCOUNT = (
@@ -213,15 +213,15 @@ PAYROLL_TYPE = (
 )
 
 RELATION_TYPE = (
-    ('01', u'Nota de crédito de los documentos relacionados'),
-    ('02', u'Nota de débito de los documentos relacionados'),
-    ('03', u'Devolución de mercancía sobre facturas o traslados previos'),
-    ('04', u'Sustitución de los CFDI previos'),
-    ('05', u'Traslados de mercancias facturados previamente'),
-    ('06', u'Factura generada por los traslados previos'),
-    ('07', u'CFDI por aplicación de anticipo'),
-    ('08', u'Factura generada por pagos en parcialidades'),
-    ('09', u'Factura generada por pagos diferidos'),
+    ('01', 'Nota de crédito de los documentos relacionados'),
+    ('02', 'Nota de débito de los documentos relacionados'),
+    ('03', 'Devolución de mercancía sobre facturas o traslados previos'),
+    ('04', 'Sustitución de los CFDI previos'),
+    ('05', 'Traslados de mercancias facturados previamente'),
+    ('06', 'Factura generada por los traslados previos'),
+    ('07', 'CFDI por aplicación de anticipo'),
+    ('08', 'Factura generada por pagos en parcialidades'),
+    ('09', 'Factura generada por pagos diferidos'),
 )
 
 

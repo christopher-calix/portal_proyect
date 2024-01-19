@@ -1,0 +1,95 @@
+[
+{
+  "model": "users.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$iaUKEUCCT6V2$gaoURST85HFlJ/OblZK9F2GQC91G07MyBt3hGLL9BVU=",
+    "last_login": "2016-09-15T21:59:22.185Z",
+    "email": "superuser@test.com",
+    "role": "S",
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$TS9bDWYxHIH3$uH3OAcY6P7vJ/0fMg46UIGRI94H90sni950dUprQ0aU=",
+    "last_login": null,
+    "email": "admin@test.com",
+    "role": "A",
+    "is_active": false,
+    "is_staff": true,
+    "is_superuser": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$GO46NBS4O5Qk$NJYeq7ZnlBS4icT94jay1jq0IkheHVoEhgLKmImuj1c=",
+    "last_login": null,
+    "email": "provider@test.com",
+    "role": "P",
+    "is_active": false,
+    "is_staff": true,
+    "is_superuser": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.account",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "taxpayer_id": "FIN1203015JA",
+    "first_name": "Finkok S.A. de C.V.",
+    "last_name": "",
+    "second_last_name": "",
+    "date_joined": "2016-09-15T21:57:57.024Z",
+    "address": null
+  }
+},
+{
+  "model": "core.account",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "taxpayer_id": "MAMJ911112LT2",
+    "first_name": "Jaime Alexis",
+    "last_name": "Martinez",
+    "second_last_name": "Medina",
+    "date_joined": "2016-09-15T21:58:10.826Z",
+    "address": null
+  }
+},
+{
+  "model": "core.account",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "taxpayer_id": "AAD990814BP7",
+    "first_name": "ASOCIACION DE AGRICULTORES DEL DISTRITO DE RIEGO 004 DON MARTIN",
+    "last_name": "",
+    "second_last_name": "",
+    "date_joined": "2016-09-15T22:05:54.030Z",
+    "address": null
+  }
+},
+{
+  "model": "core.accountprovider",
+  "pk": 1,
+  "fields": {
+    "account": 2,
+    "provider": 3,
+    "status": "P"
+  }
+}
+]

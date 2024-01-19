@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import datetime
 from .models_choices import *
-from Apps.nomina_app.utils import CreatePDF
+
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
 from django.db import connection
@@ -26,7 +26,8 @@ from django.db.models import F, Sum
 from django.dispatch import receiver  # Use 'receiver' directly
 from django.core import signing
 from .storage import satfile_storage, logo_storage, signed_storage, zip_storage, txt_storage, report_cfdis_storga
-from .utils import FinkokWS
+from .moneda import *
+from .cem.utils import FinkokWS
 
 # Additional imports
 
@@ -40,8 +41,6 @@ import csv  # No changes needed
 
 signer = Signer()  # Instantiate a Signer object for consistent signing
 ##########################
-
-
 
 
 
@@ -349,6 +348,7 @@ class PayRoll(models.Model):
         self.details.all().delete()
 
     def send_mail(self):
+        from Apps.nomina_app.utils import CreatePDF
         success = False
         try:
             if self.status == "S" and (
@@ -359,7 +359,6 @@ class PayRoll(models.Model):
                 )
                 if not result_pdf.success:
                     raise Exception("Error al crear PDF")
-
                 filenamepdf = "/tmp/%s" % (self.filename.replace("txt", "pdf"))
                 subject = u"Envio de Comprobante Fiscal de Nómina"
                 from_email = settings.DEFAULT_FROM_EMAIL
@@ -371,14 +370,11 @@ class PayRoll(models.Model):
                     "taxpayer_id": self.taxpayer_id,
                     "rtaxpayer_id": self.rtaxpayer_id,
                 }
-
                 html_content = render_to_string("invoices/send_cfdi.html", extra_dic)
-
                 if self.business.id in (94,):
                     emails_send = [self.email]
                 else:
                     emails_send = self.employee.email
-
                 msg = EmailMessage(subject, html_content, from_email, emails_send)
                 msg.content_subtype = "html"
                 if self.business.send_mail_encryption:
@@ -792,30 +788,6 @@ class PayrollReport(models.Model):
 
     def __str__(self):
         return f"{self.business} ({self.id})"  # Use f-strings for formatting
-
-    #def create_only_pdf(self):
-    #    self.set_encrypted_password()
-    #    account = self.business
-    #    role = account.user.first().role
-    #    create_zip_invoices_tasks = create_zip_invoices_pdf.apply_async((self.id,))  # Remove extra comma
-    #    return create_zip_invoices_tasks
-#
-    #def create_payroll_zip(self, split_path=False):
-    #    role = None
-    #    account = None
-#
-    #    if self.business is not None:
-    #        account = self.business
-    #        role = account.user.first().role
-    #    elif self.employee is not None:
-    #        account = self.employee
-    #        role = 'E'
-#
-    #    self.set_encrypted_password()
-    #    create_zip_invoices_tasks = create_zip_invoices.apply_async(
-    #        (self.id, account.id, self.invoices_ids, role, split_path)
-    #    )  # Remove extra comma
-    #    return create_zip_invoices_tasks.id
 
     def generate_password(self, length=24):
         letters = string.ascii_letters + string.digits + string.punctuation  # Removed ascii_uppercase (duplicate)
