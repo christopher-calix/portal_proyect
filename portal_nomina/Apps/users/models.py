@@ -26,6 +26,12 @@ class Profile(models.Model):
     email = models.EmailField(max_length=254, default =settings.USERNAME_FK)
     role = models.CharField(max_length=1, choices=ROLES)
     
+    is_active = models.BooleanField(default = False)
+    is_staff = models.BooleanField(default = True)
+    is_superuser = models.BooleanField(default = False)
+
+    type_business = models.CharField(choices=TYPE_BUSINESS, null=True, max_length=1)
+    
     def __str__(self):
         return '{} {}'.format( self.name, self.role, )
     

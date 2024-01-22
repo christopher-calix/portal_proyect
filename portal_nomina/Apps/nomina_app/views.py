@@ -104,18 +104,16 @@ class Dashboard(TemplateView):
 
     def get(self, request, *args, **kwargs):
         extra_content = {}
-        try:
-            if request.user.profile.is_authenticated and request.user.profile.role == 'E':
+        if request.user.profile.is_authenticated and request.user.profile.role == 'E':
                 taxpayer_id = request.session.get('active_account')
-                if not taxpayer_id:
+        if not taxpayer_id:
                     taxpayer_id = Employee.objects.filter(user=request.user)[0].taxpayer_id
                # extra_content = get_extra_content(taxpayer_id, request.user.role)
-        except Exception as e:
-            pass
+        
 
         if request.user.profile.role == 'S':
         
-            return redirect('/dashboard/')
+            return redirect('')
 
         return TemplateResponse(request, self.template_name, extra_content)
      
