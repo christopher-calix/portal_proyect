@@ -73,7 +73,7 @@ def index(request):
 #        return super().dispatch(request, *args, **kwargs)
 
 class LoginView(View):
-    #   http_method_names = ['POST']
+    http_method_names = ['POST']
 
     def post(self, request):
         

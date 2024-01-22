@@ -13,7 +13,7 @@ urlpatterns = [
     path('users/', views.Users.as_view(), name = 'users'),
     path('vouchers/', views.Vouchers.as_view(), name = 'vouchers'),
     path('uploads', views.Uploads.as_view(), name = 'upload'),
-  # path('', views.Dashboard.as_view(), name = 'home'),
+
 
 
 ]

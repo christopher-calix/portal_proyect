@@ -46,7 +46,7 @@ from .models import Upload
 from .models import PayrollReport
 #from .tasks import import_upload, send_mail_payroll, generate_report_payrolls, generate_report_payrolls_employee
 from django.db import transaction
-from Apps.users.models import User
+from Apps.users.models import Profile
 import re
 import time
 import zipfile
@@ -86,71 +86,45 @@ from suds.client import Client as suds_client
 
 #################################333
 
+from django.shortcuts import redirect
+from django.views import View
+from django.template.response import TemplateResponse
+from .models import Employee
 
 
-#@method_decorator(login_required(login_url='/'), name='dispatch')
-#@get_query_history  # Assuming this decorator is compatible with Python 3
-#@get_default_account  # Assuming this decorator is compatible with Python 3
-#class HistoryView(View):
-#
-#    def get(self, request, *args, **kwargs):
-#        template = 'history/history.html'
-#        context = {'filter_form': HistoryFilterForm()}
-#        return render(request, template, context)
-#
-#    def post(self, request, *args, **kwargs):
-#        try:
-#            form = HistoryFilterForm(request.POST)
-#            if form.is_valid():
-#                query = form.cleaned_data['query']
-#                account = kwargs['account']
-#                active_taxpayer_id = kwargs['active_taxpayer_id']
-#
-#                list_history = History.objects.filter(query).order_by('-date')
-#                list_history = list_history.filter(
-#                    Q(business__taxpayer_id=active_taxpayer_id) | Q(employee=account)
-#                )
-#                total = list_history.count()
-#
-#                start = int(request.POST.get('iDisplayStart'))
-#                length = int(request.POST.get('iDisplayLength'))
-#                list_history = list_history[start:start+length]
-#
-#                list_result = []
-#                for history in list_history:
-#                    options_dict = {'details': {
-#                        'detail': reverse('details_history', kwargs={'id_history': history.id})
-#                    }}
-#                    options = render_to_string('history/options.html', options_dict, request)
-#                    user = '<span class="label label-emails" title="">{}</span>'.format(history.business.email[0])
-#                    list_result.append([
-#                        user,
-#                        history.business.taxpayer_id,
-#                        history.date.strftime("%Y-%m-%d %H:%M:%S"),
-#                        history.totales_files,
-#                        history.successful_files,
-#                        history.failed_files,
-#                        options
-#                    ])
-#
-#                result = {
-#                    'aaData': list_result,
-#                    'iTotalRecords': total,
-#                    'iTotalDisplayRecords': total,
-#                }
-#                return JsonResponse(result)
-#
-#        except ObjectDoesNotExist:
-#            # Handle case where History objects are not found
-#            pass
-#
-#        except Exception as e:
-#            print(str(e))  # Log exception for debugging
-#            raise  # Re-raise the exception for higher-level h
 
+
+
+
+
+@method_decorator(login_required(login_url='/'), name='dispatch')
 
 class Dashboard(TemplateView):
-     template_name = 'views/main_views/dashboard.html'
+    template_name = 'views/main_views/dashboard.html'
+
+    def get(self, request, *args, **kwargs):
+        extra_content = {}
+        try:
+            if request.user.profile.is_authenticated and request.user.profile.role == 'E':
+                taxpayer_id = request.session.get('active_account')
+                if not taxpayer_id:
+                    taxpayer_id = Employee.objects.filter(user=request.user)[0].taxpayer_id
+               # extra_content = get_extra_content(taxpayer_id, request.user.role)
+        except Exception as e:
+            pass
+
+        if request.user.profile.role == 'S':
+        
+            return redirect('/dashboard/')
+
+        return TemplateResponse(request, self.template_name, extra_content)
+     
+     
+    #   if request.user.is_authenticated:
+    #    return HttpResponseRedirect(reverse('nomina_app:dashboard'))
+    #return render(request, 'auth/login.html')
+     
+     
      
 class Company(TemplateView):
      template_name = 'views/main_views/companies.html'
