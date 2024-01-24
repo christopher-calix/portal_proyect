@@ -1,0 +1,32 @@
+{% if role in 'AS' %}
+
+	<button title="Ingresar como" class="btn btn-warning btn-sm btn-opt-user" act="LA" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-user-secret"></i></button>
+
+{% endif %}
+
+{% comment %}
+	<button title="Cambiar Contraseña" class="btn btn-primary btn-sm btn-opt-user" act="EU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-key"></i></button>
+{% endcomment %}
+
+{% comment %}
+	{% if status == 'A' %}
+		<button title="Suspender" class="btn btn-sm btn-warning btn-opt-user" act="SU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-ban"></i></button>
+	{% elif status == 'S' %}
+		<button title="Activar" class="btn btn-sm btn-success btn-opt-user" act="AU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i	 class="fa fa-check"></i></button>
+	{% elif status == 'R' %}
+		<button title="Validar" class="btn btn-sm btn-success btn-opt-user" act="VU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-refresh"></i></button>
+	{% endif %}
+{% endcomment %}
+
+<button title="Correos de notificaciones" class="btn btn-default btn-sm" id="show-modal-business-emails" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-list"></i></button>
+
+
+<button title="Gestión envió de comprobantes" class="btn btn-info btn-sm" id="show-modal-business-send-mail" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-chain"></i></button>
+
+
+<button title="Actualizar logo" class="btn btn-success btn-sm" id="show-modal-business-logo" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-photo"></i></button>
+
+
+<button title="Actualizar Información" class="btn btn-default btn-sm" id="show-modal-business-edit" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-edit"></i></button>
+
+<button title="Mis Certificados" class="btn btn-primary btn-sm" id="show-modal-business-csd" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-key"></i></button>

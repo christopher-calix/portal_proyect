@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% block title %}Empleados{% endblock %}
+{% load staticfiles %}
+{% load core_extras %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/datatables/dataTables.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables/responsive.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.css' %}">
+<link href="{% static 'css/select-input/bootstrap-select.css' %}" media="all" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/jquery.toast.css' %}" rel="stylesheet" />
+<style type="text/css">
+  dl {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+  .modal-lg {
+    width: 800px;
+  }
+
+  @media screen and (max-width: 820px) {
+    .modal-lg {
+      width: auto !important;
+    }
+  }
+</style>
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/moment-with-locales.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/jquery.dataTables.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.responsive.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.select.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.buttons.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/core/admin/employee.js' %}" type="text/javascript"></script>
+
+<script src="{% static 'js/select-input/bootstrap-select.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.toast.js' %}" type="text/javascript" ></script>
+<script>
+  var CSRF_TOKEN = '{{ csrf_token }}';
+  var ROLE = '{{ request.user.role }}';
+</script>
+<!--style type="text/css">
+  .toolbar { 
+    float: left;
+     }
+</style-->
+{% endblock %}
+{% block icon_main %}fa fa-users{% endblock %}
+{% block title_main %}Empleados{% endblock %}
+{% block tree %}
+  <li></i><a id="href-providers" href="">Empleados</a></li>
+{% endblock %}
+
+{% block stadistic %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        Filtrado
+        <a id="hide-panel" class="pull-right pull-right clickable" href="#panel-body-filter">
+          <span class="fa fa-chevron-up"></span>
+        </a>
+      </div>
+      <div class="panel-body">
+        <fieldset>
+            <dl class="col-md-3">
+              <dt>RFC</dt>
+              <dd>
+                <div class="form-group">
+                  <input type="text" id="taxpayer_id_filter" name="taxpayer_id" class="form-control" placeholder="RFC">
+                </div>
+              </dd>
+            </dl>
+            <dl class="col-sm-3">
+              <dt>CURP</dt>
+              <dd>
+                <div class="form-group">
+                  <input type="text" id="curp_filter" class="form-control" placeholder="CURP">
+                </div>
+              </dd>
+            </dl>
+            <dl class="col-md-3">
+              <dt>Nombre/Raz&oacute;n Social</dt>
+              <dd>
+                <div class="form-group">
+                  <input type="text" id="name_filter" name="name" class="form-control" placeholder="Nombre">
+                </div>
+              </dd>
+            </dl>
+            <dl class="col-md-3">
+              <dt>Correo</dt>
+            <dd class="fields">
+              <div class="form-group">
+                <input type="text" id="email_filter" name="mail" class="form-control" placeholder="Correo">
+              </div>
+            </dd>
+          </dl>
+          <dl class="col-md-3">
+            <dt>Compañia</dt>
+            <dd class="fields">
+              <select id="company_filter" class="selectpicker form-control" data-live-search="true">
+                <optgroup label="Compañia">
+                  <option value="">Todos</option>
+                  {% list_business as business %}
+                  {% for bus in business %}
+                  <option value="{{ bus.id }}">{{ bus.name }}</option>
+                  {% endfor %}
+                </optgroup>
+              </select>
+            </dd>
+          </dl>
+          <dl class="col-md-3">
+            <dt>Departamento</dt>
+            <dd class="fields">
+              <input type="text" id="department_filter" class="form-control" placeholder="Departamento">
+            </dd>
+          </dl>
+          <dl class="col-md-2">
+            <dt>Puesto</dt>
+            <dd class="fields">
+              <input type="text" id="puesto_filter" class="form-control" placeholder="Puesto">
+            </dd>
+          </dl>
+          <dl class="col-md-2">
+            <dt>Estatus</dt>
+            <dd class="fields">
+              <select id="status_filter" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+                <optgroup label="Estatus">
+                  <option value="">Todos</option>
+                  <option value="A">Activo</option>
+                  <option value="S">Suspendido</option>
+                  <option value="P">Pendiente</option>
+                  <option value="R">Revocado</option>
+                </optgroup>
+              </select>
+            </dd>
+          </dl>
+          <dl class="col-md-2">
+            <dt>Limpiar</dt>
+            <dd class="fields">
+              <button id="clean_filters" class="btn btn-danger form-control"><i class="fa fa-eraser"></i>&nbsp; <b>Limpiar</b></button>
+            </dd>
+          </dl>
+      </fieldset>  
+      </div>
+    </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        Empleados
+        <div class="pull-right">
+          <a id="refresh-employee" title="Refrescar" href="#/">
+            <span class="fa fa-refresh"></span>
+          </a>
+        </div>
+      </div>
+      <div class="panel-body">
+
+        <table class="table table-striped table-bordered nowrap" id="table_employee" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>RFC</th>
+              <th>CURP</th>
+              <th>Nombre/Raz&oacute;n social</th>
+              <th>Correo electr&oacute;nico</th>
+              <th>Departamento</th>
+              <th>Puesto</th>
+              <th>Estatus</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="add_employee" id="add_employee">
+  <div class="modal-dialog modal-lg" role="document">
+        
+    <div class="modal-content">
+    <form id="form_add_employee" name="form_add_employee" autocomplete="off" novalidate>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel"><b>Agregar Empleado</b></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <dl class="col-sm-5">
+            <label><b>* RFC</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="RFC" id="taxpayer_id_add" required/>
+          </dl>
+          <dl class="col-sm-7">
+            <label><b>* CURP</b></label>
+            <input type="text" class="form-control" value="" placeholder="CURP" id="curp_add" required>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-4">
+            <label><b>* ID</b></label>
+            <input type="text" id="id_add" class="form-control" value="" placeholder="ID" required>
+          </dl>
+          <dl class="col-sm-8">
+            <label><b>* Nombre</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="Nombre" id="name_add" required/>        
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>*Correo</b></label>
+            <input type='email' class="form-control" autocomplete="off" value="" placeholder="Correo Electr&oacute;nico" id="email_add" required/>      
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Estatus</b></label>
+            <select id="status_add" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+              <optgroup label="Estatus">
+                <option value="A">Activo</option>
+                <option value="S">Suspendido</option>
+              </optgroup>
+            </select>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          {% comment %}
+          <dl class="col-sm-4">
+            <label><b>* Compañia</b></label>
+            <dd class="fields">
+              <select id="company_add" class="selectpicker form-control" data-live-search="true">
+                <optgroup label="Compañia">
+                  <option value="">Todos</option>
+                  {% list_business as business %}
+                  {% for bus in business %}
+                  <option value="{{ bus.id }}">{{ bus.name }}</option>
+                  {% endfor %}
+                </optgroup>
+              </select>
+            </dd>
+          </dl>
+          {% endcomment %}
+          <dl class="col-sm-6">
+            <label><b>* Departamento</b></label>
+            <input type="text" id="department_add" class="form-control" placeholder="Departamento" required>
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Puesto</b></label>
+            <input type="text" id="puesto_add" class="form-control" placeholder="Puesto" required>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>* Contraseña</b></label>
+            <input type='password' class="form-control" autocomplete="off" value="" placeholder="Contraseña" id="password_add" required/> 
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Repetir contraseña</b></label>
+            <input type='password' class="form-control" autocomplete="off" value="" placeholder="Repetir contraseña" id="password2_add" required/> 
+          </dl>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><b>Cerrar</b></button>
+        <button type="button" id='add_user_button' class="btn btn-primary"><b>Agregar</b></button>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="add_employee" id="add_employee">
+  <div class="modal-dialog modal-lg" role="document">
+        
+    <div class="modal-content">
+    <form id="form_add_employee" name="form_add_employee" autocomplete="off" novalidate>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel"><b>Agregar Empleado</b></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <dl class="col-sm-5">
+            <label><b>* RFC</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="RFC" id="taxpayer_id_add" required/>
+          </dl>
+          <dl class="col-sm-7">
+            <label><b>* CURP</b></label>
+            <input type="text" class="form-control" value="" placeholder="CURP" id="curp_add" required>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-4">
+            <label><b>* ID</b></label>
+            <input type="text" id="id_add" class="form-control" value="" placeholder="ID" required>
+          </dl>
+          <dl class="col-sm-8">
+            <label><b>* Nombre</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="Nombre" id="name_add" required/>        
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>*Correo</b></label>
+            <input type='email' class="form-control" autocomplete="off" value="" placeholder="Correo Electr&oacute;nico" id="email_add" required/>      
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Estatus</b></label>
+            <select id="status_add" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+              <optgroup label="Estatus">
+                <option value="A">Activo</option>
+                <option value="S">Suspendido</option>
+              </optgroup>
+            </select>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          {% comment %}
+          <dl class="col-sm-4">
+            <label><b>* Compañia</b></label>
+            <dd class="fields">
+              <select id="company_add" class="selectpicker form-control" data-live-search="true">
+                <optgroup label="Compañia">
+                  <option value="">Todos</option>
+                  {% list_business as business %}
+                  {% for bus in business %}
+                  <option value="{{ bus.id }}">{{ bus.name }}</option>
+                  {% endfor %}
+                </optgroup>
+              </select>
+            </dd>
+          </dl>
+          {% endcomment %}
+          <dl class="col-sm-6">
+            <label><b>* Departamento</b></label>
+            <input type="text" id="department_add" class="form-control" placeholder="Departamento" required>
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Puesto</b></label>
+            <input type="text" id="puesto_add" class="form-control" placeholder="Puesto" required>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>* Contraseña</b></label>
+            <input type='password' class="form-control" autocomplete="off" value="" placeholder="Contraseña" id="password_add" required/> 
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Repetir contraseña</b></label>
+            <input type='password' class="form-control" autocomplete="off" value="" placeholder="Repetir contraseña" id="password2_add" required/> 
+          </dl>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><b>Cerrar</b></button>
+        <button type="button" id='add_user_button' class="btn btn-primary"><b>Agregar</b></button>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="edit_employee" id="edit_employee">
+  <div class="modal-dialog modal-lg" role="document">
+        
+    <div class="modal-content">
+    <form id="form_edit_employee" form_edit_employee_ie="" name="form_edit_employee" autocomplete="off" novalidate>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel"><b>Editar Empleado</b></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <dl class="col-sm-5">
+            <label><b>* RFC</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="RFC" id="taxpayer_id_edit" required/>
+          </dl>
+          <dl class="col-sm-7">
+            <label><b>* CURP</b></label>
+            <input type="text" class="form-control" value="" placeholder="CURP" id="curp_edit" required>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-4">
+            <label><b>* ID</b></label>
+            <input type="text" id="id_edit" class="form-control" value="" placeholder="ID" required>
+          </dl>
+          <dl class="col-sm-8">
+            <label><b>* Nombre</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="Nombre" id="name_edit" required/>        
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>*Correo</b></label>
+            <input type='email' class="form-control" autocomplete="off" value="" placeholder="Correo Electr&oacute;nico" id="email_edit" required/>      
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Estatus</b></label>
+            <select id="status_edit" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+              <optgroup label="Estatus">
+                <option value="A">Activo</option>
+                <option value="S">Suspendido</option>
+              </optgroup>
+            </select>
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-6">
+            <label><b>* Departamento</b></label>
+            <input type="text" id="department_edit" class="form-control" placeholder="Departamento" required>
+          </dl>
+          <dl class="col-sm-6">
+            <label><b>* Puesto</b></label>
+            <input type="text" id="puesto_edit" class="form-control" placeholder="Puesto" required>
+          </dl>
+        </div>
+        <br>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><b>Cerrar</b></button>
+        <button type="button" id='edit_employee_button' class="btn btn-primary"><b>Editar</b></button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="password_employee" id="password_employee">
+  <div class="modal-dialog" role="document">
+        
+    <div class="modal-content">
+    <form id="form_password_employee" name="form_password_employee"  novalidate>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Cambiar Contraseña</h4>
+      </div>
+      <div class="modal-body">
+        <br>
+        <div class="row">
+        <dl class="col-sm-9">
+          <label><b>*Correo:</b></label>
+          <input type='text' class="form-control" id="email_edit_password" required disabled="" />        
+        </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-9">
+            <dt>Nueva contrasena</dt>
+            <dd class="fields">
+              <input type='password' class="form-control" id="password_edit_" required/> 
+            </dd>        
+          </dl>
+        </div>
+        <br>
+        <div class="row">
+          <dl class="col-sm-9">
+            <dt>Repetir contrasena</dt>
+            <dd class="fields">
+              <input type='password' class="form-control" id="password2_edit_" required/> 
+            </dd>        
+          </dl>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-update-info">Actualizar</button>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}

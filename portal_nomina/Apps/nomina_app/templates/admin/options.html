@@ -1,0 +1,41 @@
+{% if role in 'AS' %}
+
+	<button title="Ingresar como" class="btn btn-default btn-sm btn-opt-user" act="LA" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-user-secret"></i></button>
+
+	<button title="Cambiar Contraseña" class="btn btn-primary btn-sm btn-opt-user" act="EU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-key"></i></button>
+
+	<button title="Editar" class="btn btn-default btn-sm" id="show-modal-edit" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-edit"></i></button>
+
+	{% if status == 'A' %}
+		<button title="Suspender" class="btn btn-sm btn-warning btn-opt-user" act="SU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-ban"></i></button>
+		{% comment %}
+			<button title="Revocar" class="btn btn-sm btn-danger btn-opt-user" act="RU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-times"></i></button>
+		{% endcomment %}
+
+	{% elif status == 'S' %}
+		<button title="Activar" class="btn btn-sm btn-success btn-opt-user" act="AU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i	 class="fa fa-check"></i></button>
+	
+	{% elif status == 'R' %}
+		<button title="Validar" class="btn btn-sm btn-success btn-opt-user" act="VU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-refresh"></i></button>
+
+	{% endif %}
+
+{% elif role == 'B' %}
+	
+	<button title="Cambiar Contraseña" class="btn btn-primary btn-sm btn-opt-user" act="EU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-key"></i></button>
+
+	{% if status == 'A' %}
+		<button title="Suspender" class="btn btn-sm btn-warning btn-opt-user" act="SU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-ban"></i></button>
+		{% comment %}
+			<button title="Revocar" class="btn btn-sm btn-danger btn-opt-user" act="RU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-times"></i></button>
+		{% endcomment %}
+
+	{% elif status == 'S' %}
+		<button title="Activar" class="btn btn-sm btn-success btn-opt-user" act="AU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i	 class="fa fa-check"></i></button>
+	
+	{% elif status == 'R' %}
+		<button title="Validar" class="btn btn-sm btn-success btn-opt-user" act="VU" user-id="{{ user_id }}" account-id="{{ account_id }}" taxpayer_id="{{ taxpayer_id }}"><i class="fa fa-refresh"></i></button>
+
+	{% endif %}
+
+{% endif %}
