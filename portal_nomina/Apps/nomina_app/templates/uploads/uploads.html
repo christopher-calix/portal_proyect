@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Cargas{% endblock %}
+{% load staticfiles %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/datatables/dataTables.bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/datatables/responsive.bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.css' %}">
+  <link href="{% static 'css/select-input/bootstrap-select.css' %}" media="all" rel="stylesheet" type="text/css" />
+  <link href="{% static 'css/jquery.toast.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/history/core/history.css' %}" rel="stylesheet" />
+  <style type="text/css">
+      .text-bold{
+          color:#000;
+      }
+  </style>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'js/datatables/jquery.dataTables.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/datatables/dataTables.bootstrap.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/datatables/dataTables.responsive.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/datatables/dataTables.select.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/moment-with-locales.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/core/providers/uploads.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/select-input/bootstrap-select.js' %}" type="text/javascript"></script>
+  <script src="{% static 'js/jquery.toast.js' %}" type="text/javascript" ></script>
+  <script >
+    var CSRF_TOKEN = '{{ csrf_token }}';
+    {% comment %}var tipo = '{{ type }}'; {% endcomment %}
+  </script>
+{% endblock %}
+
+{% block icon_main %}fa fa-cloud-upload{% endblock %}
+{% block title_main %}Cargas{% endblock %}
+{% block tree %}
+<li><a href="{% url 'list_uploads' %}">Cargas</a></li>
+{% endblock %}
+{% block menu %}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        Filtrado:
+      </header>
+      <div class="panel-body">
+        <fieldset>
+        <dl class="col-md-6 col-lg-3">
+          <dt>ID de carga</dt>
+          <input type="text" id="filter_id" name="ID" class="col-md-12 form-control" placeholder="ID de carga">
+        </dl>
+        <dl class="col-md-6 col-lg-3">
+          <dt>Nombre de Archivo</dt>
+          <input type="text" id="filter_name" name="name" class="col-md-12 form-control" placeholder="Nombre de Archivo">
+        </dl>
+        <dl class="col-md-6 col-lg-3">
+          <dt>Fecha Inicial</dt>
+          <dd class="fields">
+            <div class="input-group date" id="date-from">
+              <input type='text' class="form-control" id="date-from-res" placeholder="Fecha Inicial"/>
+              <span class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </span>
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-6 col-lg-3">
+          <dt>Fecha Final</dt>
+          <dd class="fields">
+            <div class="input-group date" id="date-to">
+              <input type='text' class="form-control" id="date-to-res" placeholder="Fecha Final"/>
+              <span class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </span>
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-4 col-lg-2">
+            <dt>Estatus</dt>
+            <dd class="fields">
+                <select id="filter_estado" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+                    <optgroup label="Estatus">
+                        <option value="A">Todos</option>
+                        <option value="0">Pendiente</option>
+                        <option value="1">En proceso</option>
+                        <option value="2">Terminado</option>
+                        <option value="3">Error</option>
+                    </optgroup>
+                </select>
+            </dd>
+        </dl>
+        <dl class="col-md-2">
+          <dt>Limpiar</dt>
+          <button type="button" id="clean" class="form-control btn-info" title="Limpiar campos"><i class="fa fa-eraser"></i>&nbsp;&nbsp;Limpiar</button>
+        </dl>
+      </fieldset>
+      </div>
+    </section>
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        Historial de cargas:
+      </header>
+      <div class="panel-body">
+        <table class="table table-striped table-bordered nowrap" id="uploads_list" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>ID de tarea</th>
+              <th>Usuario</th>
+              <th>Nombre Archivo</th>
+              <th>Periodo Inicio</th>
+              <th>Periodo Fin</th>
+              <th>Fecha Carga</th>
+              <th>Total Txts</th>
+              <th>Txts Exitosos</th>
+              <th>Txts Erroneos</th>
+              <th>Estatus</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>ID de carga</th>
+              <th>Usuario</th>
+              <th>Nombre Archivo</th>
+              <th>Periodo Inicio</th>
+              <th>Periodo Fin</th>
+              <th>Fecha Carga</th>
+              <th>Total Txts</th>
+              <th>Txts Exitosos</th>
+              <th>Txts Erroneos</th>
+              <th>Estatus</th>
+              <th>Opciones</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

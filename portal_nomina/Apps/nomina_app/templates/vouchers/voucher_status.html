@@ -1,0 +1,11 @@
+{% if status == 'S'%}
+    <a class="btn btn-success btn-xs"><strong>Timbrado</strong></a>
+{% elif status == 'C'%}
+    <a class="btn btn-danger btn-xs" data-toggle="popover" data-content="{{ notes }}"><strong>Cancelado</strong></a>
+{% elif status == 'P'%}
+    <a class="btn btn-warnig btn-xs"><strong>En Proceso</strong></a>
+{% elif status == 'E'%}
+    <a class="btn btn-danger btn-xs" data-toggle="popover" data-content="{{ notes }}"><strong>Error</strong></a>
+{% endif %}
+
+

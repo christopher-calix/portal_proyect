@@ -1,0 +1,9 @@
+{% if status == '0' %}
+    <span class="label label-emails" style="padding: 4px; font-size: 12px;" title="Pendiente">Pendiente</span>
+{% elif status == '1' %}
+    <span class="label label-warning" style="padding: 4px; font-size: 12px;" title="En Proceso">En Proceso</span>
+{% elif status == '2' %}
+    <span class="label label-success" style="padding: 4px; font-size: 12px;" title="Terminado">Terminado</span>
+{% elif status == '3' %}
+    <span class="label label-danger" title="Error">Error</span>
+{% endif %}

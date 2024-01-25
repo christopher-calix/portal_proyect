@@ -1,0 +1,35 @@
+
+{% if invoice.status == 'S' %}
+  {% if request.user.role in 'SBAE' %}
+
+    {% if invoice.confirmed and request.user.role == 'E' %}
+    <a href="{{ invoice.pdf }}" class="btn btn-info btn-xs" title="Descargar PDF"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+    <a href="{{ invoice.download }}" class="btn btn-primary btn-xs" title="Descargar XML"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
+    <a title="Enviar email" class="btn btn-default btn-xs can" uuid="{{ invoice.uuid }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+    {% endif %}
+    {% if not invoice.confirmed and request.user.role == 'E' %}
+      <a title="Firmar Nómina" class="btn btn-success btn-xs btn_sing" uuid="{{ invoice.uuid }}"><i class="fa fa-check" aria-hidden="true"></i></a>
+    	<a title="Firmar Nómina mediente tu smartphone" class="btn btn-info btn-xs btn_qr" uuid="{{ invoice.uuid }}"><i class="fa fa-qrcode" aria-hidden="true"></i></a>
+    {% endif %}
+  {% endif %}
+
+  {% if request.user.role in 'ABS' %}
+    <!--<a href="{{ invoice.delete }}" class="btn btn-danger btn-sm" title="Eliminar"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
+    <!--<a title="Eliminar Registro" class="btn btn-danger btn-xs rem" uuid="{{ invoice.uuid }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
+    <a href="{{ invoice.pdf }}" class="btn btn-info btn-xs" title="Descargar PDF"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+    <a href="{{ invoice.download }}" class="btn btn-primary btn-xs" title="Descargar XML"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
+    <a title="Enviar email" class="btn btn-default btn-xs can" uuid="{{ invoice.uuid }}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+    {% if invoice.status != 'C'%}
+      <a title="Cancelar CFDI" class="btn btn-danger btn-xs btn_can" uuid="{{ invoice.uuid }}" taxpayer_id="{{ invoice.taxpayer_id }}"><i class="fa fa-close" aria-hidden="true"></i></a>
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% if request.user.role in 'ABS' %}
+    <a href="{{ invoice.txt }}" class="btn btn-default btn-xs" title="Descargar Insumo"><i class="fa fa-file" aria-hidden="true"></i></a>
+    {% if invoice.status == 'E' %}
+      <a href="{{ invoice.download }}" class="btn btn-primary btn-xs" title="Descargar XML Origen"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
+    {% endif %}
+{% endif %}
+
+
