@@ -1,10 +1,13 @@
 from __future__ import unicode_literals
 
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseNotFound
+
 
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+
 from django.views import View
 from .views_choices import *
 
@@ -737,7 +740,7 @@ class Vouchers(TemplateView):
                 active_taxpayer_id = kwargs['active_taxpayer_id']
 
                 list_invoices = PayRoll.objects.filter(kwargs['query'])
-                if request.user.role == "E":
+                if request.user.profile.role == "E":
                     list_invoices = list_invoices.filter(status='S')
                 list_invoices = list_invoices.order_by('-id')
 
@@ -913,7 +916,7 @@ class ListInvoicesView(TemplateView):
 
                 try:
                     list_invoices = PayRoll.objects.filter(kwargs['query'])
-                    if request.user.role == "E":
+                    if request.user.profile.role == "E":
                         list_invoices = list_invoices.filter(status='S')
                     list_invoices = list_invoices.order_by('-id')
 
@@ -979,6 +982,8 @@ class ListInvoicesView(TemplateView):
         return TemplateResponse(request, template)
 
 class UploadView(TemplateView):
+
+    template_name = 'views/main_views/uploads.html'
 
     def post(self, request, *args, **kwargs):
         try:
@@ -1075,7 +1080,7 @@ class DownloadView(TemplateView):
     def get(self, request, payroll_id, *args, **kwargs):
         try:
             user = request.user
-            role = user.role
+            role = user.profile.role
             account = kwargs['account']
             query = Q(id=payroll_id)
             invoice = PayRoll.objects.get(query)
@@ -1086,7 +1091,7 @@ class DownloadView(TemplateView):
             elif role == 'E':
                 inv_account = invoice.employee
 
-            if inv_account == account or user.role in ('S', 'A', 'B', 'E'):
+            if inv_account == account or user.profile.role in ('S', 'A', 'B', 'E'):
                 filename = '%s.xml' % invoice.get_filename()
                 response = HttpResponse(invoice.xml, content_type='application/xml text/xml')
                 response['Content-Disposition'] = 'attachment; filename=%s' % filename
@@ -1123,7 +1128,7 @@ class PDFView(TemplateView):
     def get(self, request, uuid, *args, **kwargs):
         try:
             user = request.user
-            role = user.role
+            role = user.profile.role
             account = kwargs['account']
             query = Q(uuid=uuid)
             invoice = PayRoll.objects.get(query)
@@ -1135,7 +1140,7 @@ class PDFView(TemplateView):
             elif role == 'E':
                 inv_account = invoice.employee
 
-            if inv_account == account or user.role in ('S', 'B', 'E', 'A'):
+            if inv_account == account or user.profile.role in ('S', 'B', 'E', 'A'):
                 filename = '%s.xml' % invoice.uuid
                 XML_PATH = invoice._xml.path
                 PDF_PATH = '/tmp/'
@@ -1184,7 +1189,7 @@ class SendEmailView(TemplateView):
         success = False
         message = ''
         
-        if request.user.role == 'E':
+        if request.user.profile.role == 'E':
             business_obj = kwargs['account'].business
         else:
             business_obj = kwargs['account']
@@ -1620,7 +1625,7 @@ class StuffsView(TemplateView):
     def set_business(self, request, context):
         try:
             business_id = request.POST.get('business')
-            role = request.user.role
+            role = request.user.profile.role
 
             if role in ('A', 'S', 'B'):
                 business = Business.objects.get(id=business_id)
@@ -1699,3 +1704,820 @@ class GetCodeView(View):
         image_path = os.path.join(settings.TEMPORARY_QR, filename)
         img.save(image_path)
         return image_path, static('temporary/'+filename)
+
+@method_decorator(login_required(login_url='/'), name='dispatch')
+class TokenAddView(View):
+    template_name = 'dashboard.html'
+
+    def post(self, request, *args, **kwargs):
+        token = request.POST.get('token')
+        user = request.user
+
+        try:
+            user_tokens = TokensUser.objects.filter(user=user, token=token)
+
+            if user_tokens.exists():
+                # Token already exists for the user
+                return TemplateResponse(request, self.template_name)
+            else:
+                # Token does not exist, create a new one
+                TokensUser.objects.create(token=token, user=user)
+
+        except Exception as e:
+            print('Exception in TokenAddView => %s ' % e)
+
+        return TemplateResponse(request, self.template_name)
+      
+@method_decorator(login_required, name='dispatch')
+class ListNewsView(TemplateView):
+    template_name = 'notifications/notifications.html'
+
+    def get(self, request, *args, **kwargs):
+        active_account = kwargs.get('account', None)
+        active_taxpayer_id = kwargs.get('active_taxpayer_id', None)
+
+        if 'read' in request.path:
+            return self.handle_read_request(active_account, active_taxpayer_id)
+        elif bool(re.findall(r"[0-9]+", request.path)):
+            return self.handle_single_news_request(request)
+
+        return TemplateResponse(request, self.template_name)
+
+    def handle_read_request(self, active_account, active_taxpayer_id):
+        user = self.request.user
+
+        if user.profile.role in ('B', 'E'):
+            account = self.get_account(user.profile.role, user, active_account, active_taxpayer_id)
+            if account:
+                news = self.get_news_for_account(user.profile.role, account)
+            else:
+                news = News.objects.filter(business=None, employee=None)
+
+            news.update(read=True)
+
+        return TemplateResponse(self.request, self.template_name)
+
+    def handle_single_news_request(self, request):
+        new_id = re.findall(r"[0-9]+", request.path)[0]
+        new = get_object_or_404(News, id=new_id)
+        new.read = True
+        new.save()
+
+        return TemplateResponse(request, self.template_name)
+
+    def get_account(self, role, user, active_account, active_taxpayer_id):
+        if active_account:
+            account = active_account
+        else:
+            try:
+                if role == 'B':
+                    account = Business.objects.get(user=user, taxpayer_id=active_taxpayer_id)
+                elif role == 'E':
+                    account = Employee.objects.get(user=user, taxpayer_id=active_taxpayer_id)
+            except Exception as e:
+                print('Exception in ListNewsView => %s' % e)
+                return None
+        return account
+
+    def get_news_for_account(self, role, account):
+        if role == 'B':
+            return News.objects.filter(business=account)
+        elif role == 'E':
+            return News.objects.filter(employee=account)
+          
+class SignView(TemplateView):
+    template_name = 'vouchers/sing.html'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            success, uuid = False, ''
+            _idb64 = kwargs.get('base64string', None)
+
+            if _idb64 is None:
+                try:
+                    filename = '{}.png'.format(_idb64.replace('/', ''))
+                    image_path = os.path.join(settings.TEMPORARY_QR, filename)
+                    os.remove(image_path)
+                except:
+                    pass
+                raise Http404
+            else:
+                uuid = cache.get(_idb64)
+                print(uuid)
+                filename = '{}.png'.format(_idb64.replace('/', ''))
+                image_path = os.path.join(settings.TEMPORARY_QR, filename)
+                cache.delete(_idb64)
+                os.remove(image_path)
+                success = True
+                payroll = PayRoll.objects.get(uuid=uuid)
+                date = payroll.details.first().paid_date
+                total_per = '$ %s' % payroll.total_per
+                total_ded = '$ %s' % payroll.total_ded
+                total = '$ %s' % payroll.total
+                total_oth = '$ %s' % payroll.total_oth
+
+            context = {
+                'success': success,
+                'uuid': uuid,
+                'date': date,
+                'total_per': total_per,
+                'total_ded': total_ded,
+                'total': total,
+                'total_oth': total_oth
+            }
+
+            return render(request, self.template_name, context)
+
+        except Exception as e:
+            print('Exception in SignView ==> %s' % (str(e)))
+            raise Http404
+          
+
+class ListUploadsView(TemplateView):
+    template_name = 'uploads/uploads.html'
+
+    def post(self, request, query, *args, **kwargs):
+        if request.is_ajax():
+            return self.handle_ajax_post(request, query, **kwargs)
+        else:
+            return render(request, self.template_name, {})
+
+    def handle_ajax_post(self, request, query, **kwargs):
+        result = {'aaData': [], 'iTotalRecords': 0, 'iTotalDisplayRecords': 0}
+        try:
+            business = kwargs['account']
+            total = 0
+            list_result = []
+            start = int(request.POST.get('iDisplayStart'))
+            length = int(request.POST.get('iDisplayLength'))
+            uploads_obj = Upload.objects.filter(business_id=business.id).filter(query).order_by('-id')
+            total = uploads_obj.count()
+            uploads = uploads_obj[start:start + length]
+
+            for upload in uploads:
+                url_descarga = None
+                upload_id = render_to_string('uploads/strings/number.html', {'number': upload.task_id}, request)
+                user = render_to_string('uploads/strings/user.html', {'user': upload.user}, request)
+                filename = upload.name
+                date = upload.created
+                total_txts = render_to_string('uploads/strings/number.html', {'number': upload.total_txt}, request)
+                total_txt_good = render_to_string('uploads/strings/number.html', {'number': upload.total_txt_good},
+                                                  request)
+                total_txt_error = render_to_string('uploads/strings/number.html', {'number': upload.total_txt_error},
+                                                   request)
+                status = render_to_string('uploads/strings/status.html', {'status': upload.status}, request)
+
+                if upload.file:
+                    url_descarga = reverse('download_upload', kwargs={'upload_id': upload.id})
+
+                options = render_to_string('uploads/strings/options.html', {'upload': upload, 'url_descarga': url_descarga},
+                                           request)
+
+                list_result.append([
+                    upload_id,
+                    user,
+                    filename,
+                    str(upload.period_date_from),
+                    str(upload.period_date_to),
+                    date.strftime("%Y-%m-%d %H:%M:%S"),
+                    total_txts,
+                    total_txt_good,
+                    total_txt_error,
+                    status,
+                    options,
+                ])
+
+            result['aaData'] = list_result
+            result['iTotalRecords'] = total
+            result['iTotalDisplayRecords'] = total
+
+        except Exception as e:
+            print('Exception in ListUploadsView => {}'.format(str(e)))
+
+        return JsonResponse(result)
+
+class ListZipsView(View):
+    template_name = 'zips/zips.html'
+
+    def post(self, request, query, *args, **kwargs):
+        if request.is_ajax():
+            return self.handle_ajax_post(request, query, **kwargs)
+        else:
+            return render(request, self.template_name, {})
+
+    def handle_ajax_post(self, request, query, **kwargs):
+        result = {'aaData': [], 'iTotalRecords': 0, 'iTotalDisplayRecords': 0}
+        try:
+            business = kwargs['account']
+            total = 0
+            list_result = []
+            start = int(request.POST.get('iDisplayStart'))
+            length = int(request.POST.get('iDisplayLength'))
+            zip_obj = Zip.objects.filter(business_id=business.id).filter(query).order_by('-id')
+            total = zip_obj.count()
+            zips = zip_obj[start:start + length]
+
+            for zip_ in zips:
+                url_descarga = None
+                zip_id = render_to_string('zips/strings/number.html', {'number': zip_.id}, request)
+                upload_id = render_to_string('zips/strings/number.html', {'number': zip_.upload_id}, request)
+                filename = zip_.name
+                date = zip_.date_created
+                total_zips = render_to_string('zips/strings/number.html', {'number': zip_.total_zip}, request)
+                total_txts = render_to_string('zips/strings/number.html', {'number': zip_.total_txt}, request)
+                status = render_to_string('zips/strings/status.html', {'status': zip_.task_status}, request)
+
+                if zip_.file:
+                    url_descarga = reverse('download_zip', kwargs={'zip_id': zip_.id})
+
+                options = render_to_string('zips/strings/options.html', {'zip': zip_, 'url_descarga': url_descarga},
+                                           request)
+
+                list_result.append([
+                    zip_id,
+                    upload_id,
+                    filename,
+                    date.strftime("%Y-%m-%d %H:%M:%S"),
+                    total_zips,
+                    total_txts,
+                    status,
+                    options,
+                ])
+
+            result['aaData'] = list_result
+            result['iTotalRecords'] = total
+            result['iTotalDisplayRecords'] = total
+
+        except Exception as e:
+            print('Exception in ListZipsView => {}'.format(str(e)))
+
+        return JsonResponse(result)
+      
+
+@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(require_http_methods(["GET"]), name='get')
+class DownloadZipView(View):
+    def get(self, request, zip_id, *args, **kwargs):
+        try:
+            zip_obj = Zip.objects.get(id=zip_id)
+            zip_string = zip_obj.file.read()
+            try:
+                zip_string = zip_string.encode('utf-8')
+            except:
+                pass
+            response = HttpResponse(zip_string, content_type='application/zip text/zip')
+            response['Content-Disposition'] = 'attachment; filename=%s' % zip_obj.name
+            return response
+        except Exception as e:
+            print('Error al descargar zip ==> %s' % str(e))
+            raise Http404
+          
+class UploadOptionsView(View):
+    template_name = 'your_template_name.html'
+
+    def post(self, request, *args, **kwargs):
+        response = {"success": False, "message": u"Error, contacte a soporte Técnico"}
+
+        try:
+            if request.is_ajax():
+                business_obj = kwargs['account']
+                oper = request.POST.get('oper', None)
+                upload_id = int(request.POST.get('object_id'))
+                upload_filter = Upload.objects.filter(id=upload_id, business_id=business_obj.id)
+
+                if upload_filter.exists():
+                    upload_obj = upload_filter.first()
+
+                    if oper == "consult":
+                        payroll_filter = PayRoll.objects.filter(upload_id=upload_id)
+                        payroll_filter_pending = payroll_filter.filter(status='P')
+
+                        if payroll_filter_pending.count() > 0:
+                            response['message'] = "ZIP en proceso"
+
+                        status_result = payroll_filter.values('status').annotate(total=Count('status')).order_by()
+
+                        for status_total in status_result:
+                            total = status_total['total']
+                            if status_total['status'] == 'S':
+                                upload_obj.total_txt_good = total
+                                upload_obj.save()
+                            elif status_total['status'] == 'E':
+                                upload_obj.total_txt_error = total
+                                upload_obj.save()
+
+                        upload_obj.status = 2
+                        upload_obj.task_status = 'SUCCESS'
+                        upload_obj.save()
+
+                        upload_obj.send_report_mail()
+
+                        for payroll_obj in payroll_filter.filter(status='S'):
+                            if settings.ASYNC_PROCCESS:
+                                send_mail_payroll.apply_async((payroll_obj.id,))
+                            else:
+                                payroll_obj.send_mail()
+
+                        response['success'] = True
+
+                    elif oper == "proccess":
+                        if settings.ASYNC_PROCCESS:
+                            task_upload = import_upload.apply_async((upload_obj.id,),)
+                            upload_obj.refresh_from_db()
+                            upload_obj.task_id = task_upload.id
+                            upload_obj.task_status = task_upload.status
+                            upload_obj.save()
+                            response['message'] = u"Se inicio el procesamiento de la carga seleccionada de forma exitosa."
+                        else:
+                            import_upload(upload_obj.id)
+                            response['message'] = u"El procesamiento de la carga seleccionada finalizo de forma exitosa."
+                        response['success'] = True
+
+                    else:
+                        response['message'] = u"Opción invalida"
+
+                else:
+                    response['message'] = u"El registro de carga no existe"
+
+        except Exception as e:
+            print('Exception in UploadOptionsView => {}'.format(str(e)))
+
+        return JsonResponse(response)
+      
+
+class GenerateReportView(View):
+
+    def post(self, request, query, *args, **kwargs):
+        success = False
+        message = "Error no controlado, favor de comunicarse a soporte técnico"
+
+        try:
+            if request.is_ajax():
+                business_obj = kwargs['account']
+
+                ids = list(PayRoll.objects.filter(query).filter(status__in=['S', 'C']).order_by('-id')
+                           .values_list('details', flat=True))
+
+                if request.user.role == "E":
+                    tasks = generate_report_payrolls_employee.apply_async((business_obj.id, ids),)
+                else:
+                    tasks = generate_report_payrolls.apply_async((business_obj.id, ids),)
+                message = "El reporte se comenzó a generar, una vez que este listo se enviara por email a: {}".format(
+                    ', '.join(business_obj.email))
+                success = True
+            else:
+                message = "Petición invalida"
+
+        except Exception as e:
+            print('Exception in GenerateReportView => {}'.format(str(e)))
+
+        response = {"success": success, "message": message}
+        return JsonResponse(response)
+
+
+class DownloadPayrollsMasiveView(View):
+
+    def post(self, request, query, *args, **kwargs):
+        success = False
+        message = "Error no controlado, favor de comunicarse a soporte técnico"
+
+        try:
+            if request.is_ajax():
+                business_obj = kwargs['account']
+                role = kwargs['role']
+
+                xml = json.loads(request.POST.get('xml', 'false'))
+                pdf = json.loads(request.POST.get('pdf', 'false'))
+                is_employee = json.loads(request.POST.get('empleado', 'false'))
+                split_path = json.loads(request.POST.get('split_path', 'false'))
+
+                if is_employee:
+                    if xml or pdf:
+                        payrolls_filter = PayRoll.objects.filter(query).filter(status__in=['S', 'C'])
+                        for payroll_obj in payrolls_filter:
+                            send_mail_payroll.apply_async((payroll_obj.id, ))
+                        message = "Nóminas enviadas"
+                        success = True
+                    else:
+                        message = "Debes de seleccionar por lo menos un tipo de archivo."
+                else:
+                    if xml or pdf:
+                        ids = list(PayRoll.objects.filter(query).filter(status__in=['S', 'C']).order_by('-id')
+                                   .values_list('id', flat=True))
+
+                        payroll_report_obj = PayrollReport.objects.create(
+                            xml=xml,
+                            pdf=pdf,
+                            invoices_ids=ids,
+                        )
+                        if role == "E":
+                            payroll_report_obj.employee = business_obj
+                        else:
+                            payroll_report_obj.business = business_obj
+
+                        payroll_report_obj.save()
+
+                        tasks_id = payroll_report_obj.create_payroll_zip(split_path)
+
+                        message = "El reporte se comenzó a generar, una vez que este listo se enviara por email a: {}".format(
+                            ', '.join(business_obj.email))
+                        success = True
+                    else:
+                        message = "Debes de seleccionar por lo menos un tipo de archivo."
+            else:
+                message = "Petición invalida"
+
+        except Exception as e:
+            print('Exception in DownloadPayrollsMasiveView => {}'.format(str(e)))
+
+        response = {"success": success, "message": message}
+        return JsonResponse(response)
+      
+
+class BusinessLogoOptionsView(View):
+
+    def post(self, request, *args, **kwargs):
+        success = False
+        message = "Error no controlado, intenta más tarde!"
+
+        try:
+            if request.is_ajax():
+                option = request.POST.get('option', '')
+                business_id = request.POST.get('business_id', False)
+
+                if not business_id:
+                    raise Exception("Negocio no encontrado")
+
+                business_obj = Business.objects.get(id=business_id)
+
+                if option == "get_logo":
+                    message = business_obj.get_logo()
+                    success = True
+
+                elif option == "update_logo":
+                    logo = request.FILES.get('logo')
+                    business_obj.logo = logo
+                    business_obj.save()
+                    message = {
+                        "message": u"Actualización exitosa",
+                        "logo": business_obj.get_logo(),
+                    }
+                    success = True
+
+                else:
+                    message = u"Opción inválida"
+
+            else:
+                message = u"Petición inválida"
+
+        except Exception as e:
+            print("Exception in BusinessLogoOptionsView => {}".format(str(e)))
+
+        response = {"success": success, "message": message}
+        return JsonResponse(response)
+      
+class DownloadZipPayrollTemplateView(View):
+
+    def get(self, request, secrete_key=None, *args, **kwargs):
+        try:
+            if not secrete_key:
+                return HttpResponseForbidden()
+
+            report_id = signing.loads(secrete_key)
+
+            payroll_report_filter = PayrollReport.objects.filter(id=report_id)
+            if not payroll_report_filter.exists():
+                return HttpResponseNotFound()
+
+            payroll_report_obj = payroll_report_filter[0]
+
+            extra_content = {"payroll_report_obj": payroll_report_obj}
+            return TemplateResponse(request, 'zips/download_zip.html', extra_content)
+
+        except Exception as e:
+            print("Exception in DownloadZipPayrollTemplateView => {}".format(str(e)))
+            print("secrete_key => {}".format(secrete_key))
+            return HttpResponseForbidden()
+
+class DownloadZipPayrollCheckPasswordView(View):
+
+    def post(self, request, *args, **kwargs):
+        success, message = False, u"Contraseña Inválida"
+
+        try:
+            if request.is_ajax():
+                report_id_encrypted = request.POST.get("report_id")
+
+                if report_id_encrypted:
+                    password = request.POST.get("password", '')
+
+                    if password:
+                        report_id = signing.loads(report_id_encrypted)
+                        payroll_report_filter = PayrollReport.objects.filter(id=report_id)
+
+                        if payroll_report_filter.exists():
+                            payroll_report_obj = payroll_report_filter.first()
+
+                            if payroll_report_obj.get_decrypted_password() == password.strip():
+                                message = reverse('download_zip_payroll', kwargs={"secrete_key": report_id_encrypted})
+                                success = True
+
+        except Exception as e:
+            print("Exception in DownloadZipPayrollCheckPasswordView => {}".format(str(e)))
+
+        return JsonResponse({"success": success, "message": message})
+
+class DownloadZipPayrollView(TemplateView):
+
+    def get(self, request, secrete_key, *args, **kwargs):
+        try:
+            report_id = signing.loads(secrete_key)
+            payroll_report_filter = PayrollReport.objects.filter(id=report_id)
+
+            if payroll_report_filter.exists():
+                payroll_report_obj = payroll_report_filter.first()
+                zip_string = payroll_report_obj.file.read()
+                
+                try:
+                    zip_string = zip_string.encode('utf-8')
+                except:
+                    pass
+
+                response = HttpResponse(zip_string, content_type='application/zip text/zip')
+                response['Content-Disposition'] = 'attachment; filename=%s' % payroll_report_obj.get_file_name()
+                return response
+
+            else:
+                return HttpResponseNotFound()
+
+        except Exception as e:
+            print("Exception in DownloadZipPayrollView => {}".format(str(e)))
+            return HttpResponseForbidden()
+
+
+class DownloadZipPayrollTemplateView(TemplateView):
+
+    def get(self, request, secrete_key=None, *args, **kwargs):
+        try:
+            if not secrete_key:
+                return HttpResponseForbidden()
+
+            report_id = signing.loads(secrete_key)
+
+            payroll_report_filter = PayrollReport.objects.filter(id=report_id)
+            if not payroll_report_filter.exists():
+                return HttpResponseNotFound()
+
+            payroll_report_obj = payroll_report_filter[0]
+
+            extra_content = {"payroll_report_obj": payroll_report_obj}
+            return TemplateResponse(request, 'zips/download_zip.html', extra_content)
+
+        except Exception as e:
+            print("Exception in DownloadZipPayrollTemplateView => {}".format(str(e)))
+            print("secrete_key => {}".format(secrete_key))
+            return HttpResponseForbidden()
+          
+class UpdateBusinessView(View):
+
+    def post(self, request, *args, **kwargs):
+        success = False
+        message = 'Error'
+
+        try:
+            if request.is_ajax() and request.method == 'POST':
+                option = request.POST.get('option')
+
+                if option in ('get_info_business', 'edit_info_business'):
+                    taxpayer_id = request.POST.get("taxpayer_id")
+                    business_id = int(request.POST.get("business_id"))
+
+                    business_filter = Business.objects.filter(id=business_id, taxpayer_id=taxpayer_id)
+                    if business_filter.exists():
+                        business_obj = business_filter.first()
+
+                        if option == "get_info_business":
+                            message = {
+                                "name": business_obj.name,
+                                "taxpayer_id": business_obj.taxpayer_id,
+                                "emails": ','.join(business_obj.email),
+                                "estado": business_obj.address.state,
+                                "municipio": business_obj.address.municipality,
+                                "localidad": business_obj.address.locality,
+                                "cp": business_obj.address.zipcode,
+                                "calle": business_obj.address.street,
+                                "number_ext": business_obj.address.external_number,
+                                "number_int": business_obj.address.internal_number,
+                            }
+                            success = True
+                        elif option == "edit_info_business":
+                            logo = request.FILES.get("logo")
+                            name = request.POST.get("name")
+                            emails = request.POST.get("emails")[:-1].split(',')
+
+                            state = request.POST.get("state")
+                            municipality = request.POST.get("municipality")
+                            locality = request.POST.get("locality")
+                            zip_code = request.POST.get("zip_code")
+                            street = request.POST.get("street")
+                            external_number = request.POST.get("external_number")
+                            internal_number = request.POST.get("internal_number")
+
+                            business_obj.name = name
+                            business_obj.email = emails
+                            if logo:
+                                business_obj.logo = logo
+                            business_obj.save()
+
+                            address_obj = business_obj.address
+                            address_obj.state = state
+                            address_obj.municipality = municipality
+                            address_obj.locality = locality
+                            address_obj.zipcode = zip_code
+                            address_obj.street = street
+                            address_obj.neighborhood = street
+                            address_obj.internal_number = internal_number
+                            address_obj.external_number = external_number
+                            address_obj.save()
+
+                            message = u'Información actualizada exitosamente'
+                            success = True
+
+                    else:
+                        message = u"Negocio no encontrado"
+
+                else:
+                    message = u"Opción no válida"
+
+        except Exception as e:
+            print("Exception in UpdateBusinessView => {}".format(str(e)))
+
+        response = {"success": success, "message": message}
+        return JsonResponse(response)
+      
+class GenerateOnlyPdfView(View):
+
+    def post(self, request, *args, **kwargs):
+        success = False
+        message = u"Error no controlado, favor de comunicarse a soporte técnico"
+
+        try:
+            if request.is_ajax():
+                business_obj = kwargs['account']
+                ids = list(PayRoll.objects.filter(query).filter(status__in=['S', 'C']).order_by('-id').values_list('id', flat=True))
+                payroll_report_obj = PayrollReport.objects.create(
+                    xml=False,
+                    pdf=True,
+                    invoices_ids=ids,
+                    business=business_obj
+                )
+
+                tasks_id = payroll_report_obj.create_only_pdf()
+
+                message = "El archivo PDF se comenzó a generar, una vez que este listo se enviará por email a: {}. En caso de tener algún error favor de comunicarse a soporte técnico y especificar el siguiente id:{}".format(', '.join(business_obj.email), tasks_id)
+                success = True
+
+            else:
+                message = u'Petición inválida'
+
+        except Exception as e:
+            print("Exception in GenerateOnlyPdfView => {}".format(str(e)))
+
+        return JsonResponse({"success": success, "message": message})
+
+
+class ListCSDView(View):
+
+    def post(self, request, *args, **kwargs):
+        satfile_list_result = []
+        total = 0
+
+        try:
+            if request.is_ajax() and request.method == 'POST':
+                taxpayer_id = request.POST.get('taxpayer_id', None)
+                if taxpayer_id is not None:
+                    start = int(request.POST.get('iDisplayStart'))
+                    length = int(request.POST.get('iDisplayLength'))
+
+                    satfile_filter = SatFile.objects.filter(business__taxpayer_id=taxpayer_id)
+                    total = satfile_filter.count()
+                    satfile_filter = satfile_filter[start:start+length]
+
+                    for satfile_obj in satfile_filter:
+                        satfile_list_result.append([
+                            satfile_obj.business.taxpayer_id,
+                            satfile_obj.business.name,
+                            satfile_obj.serial_number,
+                            satfile_obj.get_status_display(),
+                        ])
+
+        except Exception as e:
+            print("Exception in ListCSDView => {}".format(str(e)))
+
+        response = {
+            'aaData': satfile_list_result,
+            'iTotalRecords': total,
+            'iTotalDisplayRecords': total,
+        }
+        return JsonResponse(response)
+      
+class AddViewCSD(View):
+
+    def post(self, request, *args, **kwargs):
+        success = False
+        message = "Error"
+
+        try:
+            if request.method == 'POST' and request.is_ajax():
+                # Obtener datos de la petición
+                public_cer = request.FILES.get("cer", None)
+                private_key = request.FILES.get("key", None)
+                pwd_key = request.POST.get("csd_password", None)
+                business_id = request.POST.get("business_id", None)
+
+                if public_cer is not None and private_key is not None and pwd_key is not None and business_id is not None:
+                    # Obtener Business
+                    business_obj = Business.objects.get(id=business_id)
+
+                    # Crear archivos temporales
+                    public_cer_string = public_cer.read()
+                    private_key_string = private_key.read()
+                    tmp_private_key = tempfile.NamedTemporaryFile(delete=False)
+                    tmp_private_key.write(private_key_string)
+                    tmp_private_key.close()
+                    tmp_pem_key = tempfile.NamedTemporaryFile(delete=False)
+                    tmp_pem_key.close()
+                    tmp_public_cer = tempfile.NamedTemporaryFile(delete=False)
+                    tmp_public_cer.write(public_cer_string)
+                    tmp_public_cer.close()
+                    tmp_pem_cer = tempfile.NamedTemporaryFile(delete=False)
+                    tmp_pem_cer.close()
+
+                    # Verificar que el pass corresponda con el key
+                    command_key = 'openssl pkcs8 -inform DER -in %s -out %s -passin pass:\'%s\'' % (
+                        tmp_private_key.name, tmp_pem_key.name, pwd_key)
+                    is_valid_key = os.system(command_key)
+                    if is_valid_key != 0:
+                        raise Exception('Error, la clave no es la correcta')
+
+                    # Verificar que sea CSD
+                    command_cer = 'openssl x509 -inform DER -in %s -pubkey -out %s' % (
+                        tmp_public_cer.name, tmp_pem_cer.name)
+                    is_valid_cer = os.system(command_cer)
+                    if is_valid_cer != 0:
+                        raise Exception(u'Error, Certificado (.cer) inválido o está dañado el archivo')
+                    cert = X509.load_cert(tmp_pem_cer.name)
+                    evp = EVP.load_key(tmp_pem_key.name)
+                    serial = hex(cert.get_serial_number())[3:-1:2]
+                    subject = cert.get_subject().__str__()
+                    certificate_type = 'C' if "OU" in subject else 'F'
+                    if certificate_type != 'C':
+                        raise Exception(u'Error, Los archivos corresponden a la FIEL')
+
+                    # Verificar caducidad
+                    datetime_now = datetime.now()
+                    expiration_date = cert.get_not_after().get_datetime().replace(tzinfo=None)
+                    expedition_date = cert.get_not_before().get_datetime().replace(tzinfo=None)
+                    if expedition_date > datetime_now:
+                        raise Exception(u'Error, el certificado no se encuentra Vigente')
+                    if expiration_date <= datetime_now:
+                        raise Exception(u'Error, el certificado está revocado o caducó')
+
+                    # Registrar en FINKOK
+                    response, client = FinkokWS().edit(business_obj.taxpayer_id, 'A',
+                                                      public_cer_string.encode('base64'),
+                                                      private_key_string.encode('base64'),
+                                                      pwd_key, business_obj.finkok_account)
+                    if hasattr(response, 'success'):
+                        if response.success:
+                            if response.message != "Account was Activated successfully":
+                                message = "Error al registrar los certificados, asegúrate de que sean los correctos"
+                                raise Exception(message)
+                        else:
+                            message = "Error al registrar los certificados, asegúrate de que sean los correctos"
+                            raise Exception(message)
+                    else:
+                        message = "Error al registrar los certificados, asegúrate de que sean los correctos"
+                        raise Exception(message)
+
+                    # Almacenar en el modelo
+                    sat_file_obj, created = SatFile.objects.get_or_create(business_id=business_obj.id,
+                                                                          serial_number=serial)
+                    sat_file_obj.cer_file = public_cer
+                    sat_file_obj.key_file = private_key
+                    sat_file_obj.status = 'A'
+                    sat_file_obj.passphrase = pwd_key
+                    sat_file_obj.default = True
+                    sat_file_obj.save()
+
+                    success = True
+                    message = "Certificados registrados exitosamente"
+                else:
+                    message = u"Datos inválidos"
+            else:
+                message = u"Petición inválida"
+        except Exception as e:
+            message = str(e)
+            print("Exception in AddViewCSD => {}".format(str(e)))
+
+        return JsonResponse({"success": success, "message": message})

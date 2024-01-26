@@ -1,0 +1,7 @@
+{% if zip.task_status != 'SUCCESS' %}
+    <button type="button" id="consult_task" data-id="{{ zip.id }}" class="btn btn-info btn-xs" title="Actualizar estatus"><i class="fa fa-refresh"></i></button>
+{% endif %}
+
+{% if zip.file %}
+	<a href="{{ url_descarga }}" class="btn btn-default btn-xs" title="Descargar zip"><i class="fa fa-file-zip-o" aria-hidden="true"></i></a>
+{% endif %}

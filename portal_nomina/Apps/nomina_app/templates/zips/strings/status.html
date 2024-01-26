@@ -1,0 +1,11 @@
+{% comment %}
+{% if status == 'PENDING' %}
+    <span class="label label-emails" style="padding: 4px; font-size: 12px;" title="Pendiente">Pendiente</span>
+{% endcomment %}
+{% if status == 'PENDING' %}
+    <span class="label label-warning" style="padding: 4px; font-size: 12px;" title="En Proceso">En Proceso</span>
+{% elif status == 'SUCCESS' %}
+    <span class="label label-success" style="padding: 4px; font-size: 12px;" title="Terminado">Terminado</span>
+{% elif status == 'FAILURE' %}
+    <span class="label label-danger" title="Error">Error</span>
+{% endif %}

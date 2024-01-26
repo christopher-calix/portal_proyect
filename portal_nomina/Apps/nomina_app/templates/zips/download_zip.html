@@ -1,0 +1,112 @@
+{% extends 'base2.html' %}
+{% block title %}Download File{% endblock %}
+
+{% load staticfiles %}
+{% load sizefieldtags %}
+
+{% block css %}
+<link href="{% static 'css/select-input/bootstrap-select.css' %}" media="all" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/jquery.toast.css' %}" rel="stylesheet" />
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/select-input/bootstrap-select.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.toast.js' %}" type="text/javascript" ></script>
+<link href="{% static 'css/history/core/history.css' %}" rel="stylesheet" />
+<link href="{% static 'css/history/core/history.css' %}" rel="stylesheet" />
+<style type="text/css">
+    .text-bold{
+        color:#000;
+    }
+
+</style>
+
+<script type="text/javascript">
+  $(document).on('click', '#btn_download_zip', function() {
+    swal({
+      text: 'Ingresa la contraseña',
+      content: "input",
+      button: {
+        text: "Descargar!",
+        closeModal: true,
+      },
+      closeOnClickOutside: false,
+      closeOnEsc: false,
+    })
+    .then(password => {
+      if (password == null || password.trim() == ""){
+        swal("Error!", "Contraseña Invalida", "error");
+      }
+      else{
+
+        let data_body = new FormData();
+        data_body.append('report_id', $(this).attr('data-id'));
+        data_body.append('password', password);
+        data_body.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+        fetch("/dashboard/file/zip/check/password", {
+            method: 'POST',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+            "body": data_body,
+            "headers": {'X-Requested-With': 'XMLHttpRequest'},
+        }).then(response => { return response.json()}).then(data =>{
+            if (data.success){
+              window.location.replace(data.message)
+            }else{
+              swal("Error!", "Contraseña Invalida, verifica que sea la correcta.", "error");
+            }
+        }).catch(error => {
+            swal("Error!", "Por favor, intente más tarde.", "error");
+            return false;
+        });
+      }
+    })
+  });
+
+</script>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-12 text-center">
+
+      <table style="margin: auto;">
+        <tbody>
+          <tr>
+            <td class="">
+              <img src="{% static 'img/archivo-zip.png' %}">
+            </td>
+            <td class="">
+              <h3 class="text-bold"><strong>{{payroll_report_obj.get_file_name}}</strong></h3>
+              <table style="margin: auto;">
+                <tbody>
+                  <tr>
+                    <td style="text-align: right;">
+                      <h3><strong>Tamaño: </strong></h3>
+                    </td>
+                    <td style="text-align: left;">
+                      <h3 class="text-bold"><strong>{{ payroll_report_obj.file.size|filesize }}</strong></h3>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: right;">Fecha de expiración del enlace: </td>
+                    <td class="text-bold" style="text-align: left;">{{payroll_report_obj.link_expiration_date}}</td>
+                  </tr>
+                  <tr class="bx-shared-body-fileinfo-buttons first">
+                    <td colspan="2">
+                      <br>
+                      <button class="btn btn-lg btn-block btn-primary" id="btn_download_zip" data-id="{{payroll_report_obj.get_encrypted_id}}"><strong>Descargar</strong> <i class="fa fa-download"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Notificaciones{% endblock %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/notifications/notifications.css' %}">
+{% endblock %}
+{% block icon_main %}fa fa-envelope{% endblock %}
+{% block title_main %}Notificaciones{% endblock %}
+{% block tree %}
+  <li></i><a id="href-news" href="">Notificaciones</a></li>
+{% endblock %}
+{% block content %}
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="news-box" style="background: white;">
+			<br>
+			<table cellpadding="0" cellspacing="0">
+				<tr class="top">
+					<td><b>Notificaciones</b></td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'list_news' %}{{ 'read' }}">Marcar todo como le&iacute;do</a></td>
+				</tr>
+				{% load core_extras %}
+				{% list_news request as news %}
+				{% for new in news %}
+					<tr class="heading">
+						<td><span class="label label-primary">{{ new.title }}</span></td>
+						<td><span>{{ new.created }}</span></td>
+					</tr>
+					<tr class="item">
+						<td><b> {{ new.description }} </b></td>
+						{% if not new.read %}
+						<td><a href="{% url 'list_news' %}{{ new.id }}" title="Marcar como leida"><i class="fa fa-check" aria-hidden='true'></i></a></td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

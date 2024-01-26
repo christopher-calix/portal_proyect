@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Zips{% endblock %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/datatables/dataTables.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables/responsive.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.css' %}">
+<link href="{% static 'css/select-input/bootstrap-select.css' %}" media="all" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/jquery.toast.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block js %}
+
+<script src="{% static 'js/datatables/jquery.dataTables.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.responsive.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/datatables/dataTables.select.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/moment-with-locales.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+
+<script src="{% static 'js/core/providers/zips.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/select-input/bootstrap-select.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.toast.js' %}" type="text/javascript" ></script>
+<link href="{% static 'css/history/core/history.css' %}" rel="stylesheet" />
+<style type="text/css">
+    .text-bold{
+        color:#000;
+    }
+</style>
+
+<script >
+  var CSRF_TOKEN = '{{ csrf_token }}';
+  {% comment %}var tipo = '{{ type }}'; {% endcomment %}
+</script>
+{% endblock %}
+{% block icon_main %}fa fa-file-zip-o{% endblock %}
+{% block title_main %}Zips{% endblock %}
+{% block tree %}
+<li><a href="{% url 'list_uploads' %}">Zips</a></li>
+{% endblock %}
+{% block menu %}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        Filtrado:
+      </header>
+      <div class="panel-body">
+        <fieldset>
+        <dl class="col-md-3 col-lg-1">
+          <dt>ID de zip</dt>
+          <dd>
+            <div class="form-group">
+            <input type="text" id="filter_id" name="id_zip" class="col-md-12 form-control" placeholder="ID de zip">
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-3 col-lg-1">
+          <dt>ID de carga</dt>
+          <dd>
+            <div class="form-group">
+            <input type="text" id="filter_id_carga" name="id_carga" class="col-md-12 form-control" placeholder="ID de carga">
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-6 col-lg-3">
+          <dt>Nombre de Archivo</dt>
+          <dd>
+            <div class="form-group">
+            <input type="text" id="filter_name" name="name" class="col-md-12 form-control" placeholder="Nombre de Archivo">
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-4 col-lg-2">
+          <dt>Fecha Inicial</dt>
+          <dd class="fields">
+            <div class="input-group date" id="date-from">
+              <input type='text' class="form-control" id="date-from-res" placeholder="Fecha Inicial"/>
+              <span class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </span>
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-4 col-lg-2">
+          <dt>Fecha Final</dt>
+          <dd class="fields">
+            <div class="input-group date" id="date-to">
+              <input type='text' class="form-control" id="date-to-res" placeholder="Fecha Final"/>
+              <span class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </span>
+            </div>
+          </dd>
+        </dl>
+        <dl class="col-md-4 col-lg-2">
+            <dt>Estatus</dt>
+            <dd class="fields">
+                <select id="filter_estado" class="selectpicker form-control" data-hide-disabled="true" data-live-search="true">
+                    <optgroup label="Estatus">
+                        <option value="A">Todos</option>
+                        <option value="PENDING">En proceso</option>
+                        <option value="SUCCESS">Terminado</option>
+                        <option value="FAILURE">Error</option>
+                    </optgroup>
+                </select>
+            </dd>
+        </dl>
+        <dl class="col-md-3 col-lg-1">
+          <dt>Limpiar</dt>
+          <dd class="fields">
+            <button type="button" id="clean" class="form-control btn-info" title="Limpiar campos"><i class="fa fa-eraser"></i>&nbsp;&nbsp;Limpiar</button>
+          </dd>
+        </dl>
+      </fieldset>
+      </div>
+    </section>
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        Listado de zips:
+      </header>
+      <div class="panel-body">
+        <table class="table table-striped table-bordered nowrap" id="zip_list" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>ID de Zip</th>
+              <th>ID de Carga</th>
+              <th>Nombre Archivo</th>
+              <th>Fecha Carga</th>
+              <th>Total Zips</th>
+              <th>Total Txts</th>
+              <th>Estatus</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>ID de Zip</th>
+              <th>ID de Carga</th>
+              <th>Nombre Archivo</th>
+              <th>Fecha Carga</th>
+              <th>Total Zips</th>
+              <th>Total Txts</th>
+              <th>Estatus</th>
+              <th>Opciones</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
