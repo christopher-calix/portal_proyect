@@ -161,11 +161,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+#STATICFILES_DIRS = [BASE_DIR /  'static']
 
 STATIC_URL_USERS =  'static/users/images/'
 
+TEMPORARY_QR = os.path.join(BASE_DIR + STATIC_URL, 'temporary')
+if not os.path.exists(TEMPORARY_QR):
+    os.mkdir(TEMPORARY_QR)
+    
+STATICFILES_DIRS = (
+  BASE_DIR.child('static'),
+  TEMPORARY_QR
+  )
+
+
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/secure'
+
+
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
