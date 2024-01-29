@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-import CFDI_33
+from . import CFDI_33, CFDI_40
 import csv
-import StringIO
+try:
+    import StringIO 
+except ImportError:
+    from io import StringIO 
 from lxml import etree
 from datetime import datetime
-from nomina12 import (
+
+from .nomina12 import (
   EmisorType as NomEmisorType,
   EntidadSNCFType,
   ReceptorType as NomReceptorType,
@@ -27,7 +31,6 @@ from nomina12 import (
   Nomina,
 )
 import copy
-import CFDI_40
 
 
 class PARSER_NOM(object):

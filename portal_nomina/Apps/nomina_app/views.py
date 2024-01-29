@@ -37,6 +37,8 @@ from django.urls import reverse
 
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
+#from django.contrib.staticfiles.templatetags.staticfiles import static
+
 from django.core.mail import send_mail, EmailMessage, BadHeaderError
 
 from .models import Business, Employee, TokensUser, SatFile
@@ -1703,7 +1705,7 @@ class GetCodeView(View):
         filename = '{}.png'.format(_id.replace('/', ''))
         image_path = os.path.join(settings.TEMPORARY_QR, filename)
         img.save(image_path)
-        return image_path, static('temporary/'+filename)
+        return image_path, settings.STATIC_URL('temporary/'+filename)
 
 @method_decorator(login_required(login_url='/'), name='dispatch')
 class TokenAddView(View):

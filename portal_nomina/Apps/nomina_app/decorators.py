@@ -22,13 +22,13 @@ from datetime import datetime
 
 
 INVOICE_STATUS = {
-  'N': u'En proceso de validacion', 
-  'R': u'Rechazado',
-  'V': u'Válido', 
-  'E': u'Pendiente de pago', 
-  'F': u'Pagado',
-  'C': u'Comprobante Cancelado',
-  'A': u'Todos'
+  'N': 'En proceso de validacion', 
+  'R': 'Rechazado',
+  'V': 'Válido', 
+  'E': 'Pendiente de pago', 
+  'F': 'Pagado',
+  'C': 'Comprobante Cancelado',
+  'A': 'Todos'
 }
 
 
@@ -336,5 +336,29 @@ def get_query_zip(function):
     # This function is almost identical to get_query_uploads, consider combining them
     def wrap(request, *args, **kwargs):
         template = 'zips/zips.html'
-        # ... (same logic as get_query_uploads)
+        template = 'zips/zips.html'
+        if request.method == 'POST':
+          try:
+            query = Q()
+            if 'filter_id' in request.POST:
+              query = query.__and__(Q(id=request.POST.get('filter_id')))
+            if 'filter_id_carga' in request.POST:
+              query = query.__and__(Q(upload_id=request.POST.get('filter_id_carga')))
+            if 'filter_name' in request.POST:
+              query = query.__and__(Q(name__icontains=request.POST.get('filter_name')))
+            if 'filter_estado' in request.POST and request.POST.get('filter_estado') != '':
+              query = query.__and__(Q(task_status=request.POST.get('filter_estado')))
+            if 'date_from' in request.POST and 'date_to' in request.POST:
+              date_from = request.POST.get('date_from')
+              date_from = datetime.strptime(date_from, '%d %B %Y').strftime('%Y-%m-%d') if date_from else None
+              date_to = request.POST.get('date_to')
+              date_to = datetime.strptime(date_to, '%d %B %Y').strftime('%Y-%m-%d') if date_to else None
+              if date_to and date_from:
+                query = query.__and__(Q(date_created__range=[date_from, date_to]))
+            return function(request, query, *args, **kwargs)
+          except Exception as e:
+            print ("Exception in get_query_uploads")
+            print (str(e))
+        parameters = {}
+        return TemplateResponse(request, template, context=parameters)
     return wrap

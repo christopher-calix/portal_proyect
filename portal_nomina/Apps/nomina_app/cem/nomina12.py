@@ -1,25 +1,38 @@
-#!/usr/bin/env python
-# -*- decoding: utf-8 -*-
 
-#
-# Generated Tue May  9 13:41:57 2017 by generateDS.py version 2.25a.
-#
-# Command line options:
-#   ('--external-encoding', 'UTF-8')
-#   ('--namespacedef', 'xmlns:="http://www..com"')
-#   ('-o', 'nomina12.py')
-#
-# Command line arguments:
-#   nomina12.xsd
-#
-# Command line:
-#   /usr/local/bin/generateDS --external-encoding="UTF-8" --namespacedef="xmlns:="http://www..com"" -o "nomina12.py" nomina12.xsd
-#
-# Current working directory (os.getcwd()):
-#   cfdi
-#
+
+"""**Additional information:** 
+https://github.com/ricksladkey/generateDS/blob/master/tutorial/generateds_tutoriala.txt
+
+- If you plan to work through this tutorial, you may find it helpful
+  to look at the sample code that accompanies this tutorial.  You
+  can find it in the distribution under::
+
+      tutorial/
+      tutorial/Code/
+
+- You can find additional information about ``generateDS.py`` here:
+
+      http://www.rexx.com/~dkuhlman/generateDS.html
+
+  That documentation is also included in the distribution.
+
+
+``generateDS.py`` generates Python data structures (for example,
+class definitions) from an XML schema document. These data
+structures represent the elements in an XML document described by
+the XML schema.  ``generateDS.py`` also generates parsers that load
+an XML document into those data structures. In addition, a separate
+file containing subclasses (stubs) is optionally generated. The user
+can add methods to the subclasses in order to process the contents
+of an XML document.
+"""
+
+
+
 
 import sys
+import imp
+
 import re as re_
 import base64
 import datetime as datetime_
@@ -29,14 +42,13 @@ try:
 except ImportError:
     from xml.etree import ElementTree as etree_
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+imp.reload(sys)
+sys.getdefaultencoding()
 
 Validate_simpletypes_ = True
-if sys.version_info.major == 2:
-    BaseStrType_ = basestring
-else:
+if sys.version_info.major == 3:
     BaseStrType_ = str
+
 
 
 def parsexml_(infile, parser=None, **kwargs):

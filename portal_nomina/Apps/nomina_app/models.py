@@ -16,7 +16,6 @@ from datetime import timedelta
 from random import choices
 from django.conf import settings
 from django.core.signing import Signer
-from .tasks import *
 from django.db import models  # Use 'models' instead of 'connection'
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage

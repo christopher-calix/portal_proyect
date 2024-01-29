@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% load staticfiles %}
+{% block css %}
+<link href="{% static 'css/jquery.toast.css' %}" rel="stylesheet" />
+<style type="text/css">
+  .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+    position: unset !important;
+  }
+</style>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/core/providers/perfil.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.toast.js' %}" type="text/javascript" ></script>
+<script >
+  var CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+{% endblock %}
+
+{% block icon_main %}fa fa-user{% endblock %}
+{% block title_main %}Perfil{% endblock %}
+
+{% block tree %}
+<li><a href="{% url 'profile' %}">Perfil</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <div class="profile-widget profile-widget-info">
+      <div class="panel-body">
+        <div class="col-lg-12 col-sm-12">
+          <h4>{{ name }}</h4>         
+          <div class="follow-ava">
+            <img src="{{logo}}" alt="">
+          </div>
+        </div>
+        <div class="col-lg-12 col-sm-12 follow-info" style="float: center">
+          <p>{{ request.user.email }}</p>
+          <h6>
+            <span><i class="icon_clock_alt"></i>{% now "H:m:s" %}</span>
+            <span><i class="icon_calendar"></i>{% now "d-M-Y" %}</span>
+          </h6>
+        </div>
+        <br>
+        <div class="col-lg-12 col-sm-12">
+          <button class="btn btn-default" id="btn-edit-profile"><i class="fa fa-edit">&nbsp; Editar datos de perfil</i></button>
+          &nbsp;
+          {% if request.user.role != 'E' %}
+          <button class="btn btn-default" id="btn-edit-fiscal"><i class="fa fa-edit">&nbsp; Editar datos fiscales</i></button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <section class="panel">
+      {% comment %}
+      <header class="panel-heading tab-bg-info">
+        <ul class="nav nav-tabs">
+          <li >
+            <a data-toggle="tab" href="#edit-profile">
+              <i class="fa fa-edit"></i>Datos de Perfil
+            </a>
+          </li>
+          {% if request.user.role == 'B' %}
+          <li>
+            <a data-toggle="tab" href="#edit_data_fiscal">
+              <i class="fa fa-key"></i>Datos Fiscales
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </header>
+      {% endcomment %}
+      <div class="panel-body">
+        <div class="tab-content">
+          {% comment %}
+          <div id="profile" class="tab-panel">
+            <section class="panel">
+              <div class="bio-graph-heading"></div>
+              <br>        
+            </section>                
+          </div>
+          {% endcomment %}
+          <div id="edit-profile" class="tab-pane">
+            <div class="row">
+              <div class="col-lg-6">
+                <section class="panel panel-default">
+                  <div align="center" class="panel-heading">
+                    <h2><i class="fa fa-bar-chart"></i><strong>Datos de la Cuenta</strong></h2>
+                  </div>
+                  <div class="panel-body">
+                    <div style="margin: auto; max-width: 700px;">
+                      <div class="row">
+                        <div class="col-sm-12"></div>
+                        <form role="form">
+                        {% csrf_token %} 
+                          <div class="col-sm-12">
+                            <label><b>Tipo de Persona</b></label>
+                            <input type="text" class="form-control" value="{{ person_type }}" disabled="disabled">
+                          </div>
+                          <br>
+                          <div class="col-sm-12">
+                            <label><b>RFC</b></label>
+                            <input type="text" class="form-control" id="taxpayer_id" value="{{ taxpayer_id }}" disabled>
+                          </div>
+                          <br>
+                          <div class="col-sm-12">
+                            <label><b>Nombre/Raz&oacute;n Social</b></label>
+                            <input type="text" class="form-control" id="first_name" value="{{ name }}" placeholder="Nombre/Raz&oacute;n Social">
+                          </div>
+                          {% comment %}
+                          <div class="col-sm-6">
+                            <br>
+                            <label><b>Apellido Paterno</b></label>
+                            <input type="text" class="form-control" id="last_name" value="{{ last_name }}" placeholder="Apellido Paterno">
+                            <br>
+                          </div>
+                          <div class="col-sm-6">
+                            <br>
+                            <label><b>Apellido Materno</b></label>
+                            <input type="text" class="form-control" id="second_last_name" value="{{ second_last_name }}" placeholder="Apellido Materno">
+                            <br>
+                          </div>
+                          {% endcomment %}
+                          <br>
+                          <div class="col-sm-12">
+                            <label for="ejemplo_password_1"><b>Imagen/Logotipo</b></label>
+                            <div class="input-group input-file-img" name="Fichier1">
+                              <span class="input-group-btn">
+                                <button class="btn btn-default btn-choose" type="button"><i class="fa fa-image"></i></button>
+                              </span>
+                              <input type="text" class="form-control" value="{{ logo }}" id="logotipo" placeholder='Selecciona el logotipo para sus nóminas'/>
+                              <span class="input-group-btn">
+                                <button class="btn btn-default btn-reset" type="button"><i class="fa fa-eraser"></i></button>
+                              </span>
+                            </div>
+                          </div>
+                          <br>
+                          <div align="right" class="col-sm-12">
+                            <button type="button" class="btn btn-primary btn_profile"><b><i class="fa fa-floppy-o"></i>&nbsp; Guardar Cambios</b></button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>  
+                  </div>
+                </section>
+              </div>
+              <div class="col-lg-6">
+                <section class="panel panel-default">
+                  <div align="center" class="panel-heading">
+                    <h2><i class="fa fa-bar-chart"></i><strong>Datos del Domicilio</strong></h2>
+                  </div>
+                  <div class="panel-body">
+                    <div style="margin: auto; max-width: 700px;">
+                      <div class="row">
+                        <form role="form">
+                          {% csrf_token %} 
+                          <div class="col-lg-6">
+                            <label><b>Pa&iacute;s</b></label>
+                            <input type="text" class="form-control" id="country" value="{{ country }}" placeholder="Pa&iacute;s">
+                          </div>
+                          <div class="col-lg-6">
+                            <label><b>Estado</b></label>
+                            <input type="text" class="form-control" id="state" value="{{ state }}" placeholder="Estado">
+                          </div>
+                          <div class="col-lg-6">
+                            <br>
+                            <label><b>Municipio</b></label>
+                            <input type="text" class="form-control" id="municipality" value="{{ municipality }}" placeholder="Municipio">
+                            <br>
+                          </div>
+                          <div class="col-lg-6">
+                            <br>
+                            <label><b>Localidad</b></label>
+                            <input type="text" class="form-control" id="locality" value="{{ locality }}" placeholder="Localidad">
+                            <br>
+                          </div>
+                          <div class="col-lg-12">
+                            <label><b>Calle</b></label>
+                            <input type="text" class="form-control" id="street" value="{{ street }}" placeholder="Calle">
+                          </div>
+                          <br>
+                          <div class="col-lg-6">
+                            <label><b>N&uacute;m. Ext.</b></label>
+                            <input type="number" class="form-control" id="external_number" value="{{ external_number }}" placeholder="Num. Ext.">
+                          </div>
+                          <div class="col-lg-6">
+                            <label><b>Tel&eacute;fono</b></label>
+                            <input type="number" class="form-control" id="phone" value="{{ phone }}" placeholder="Telefono">
+                            <br>
+                          </div>
+                          <div align="right" class="col-sm-12">
+                            <button type="button" class="btn btn-primary btn_address"><b><i class="fa fa-floppy-o"></i>&nbsp; Guardar Cambios</b></button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>  
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="edit_data_fiscal" class="tab-pane">
+            <div class="container">
+              <div class="row">
+                <div class="col align-self-start">
+                  <div class="col-lg-12">
+                    <section class="panel panel-default">
+                      <div align="center" class="panel-heading">
+                        <h2><i class="fa fa-bar-chart"></i><strong>Datos Fiscales</strong></h2>
+                      </div>
+                      <div class="panel-body">
+                        <div style="margin: auto; max-width: 600px;">
+                          <div class="row">
+                            <form id="data_fiscal" role="form">
+                              {% csrf_token %} 
+                              <div class="form-group">
+                                <strong><label for="username">Usuario PAC</label></strong>
+                                <input type="text" class="form-control" id="fk_username" placeholder="Introduce tu Usuario de PAC">
+                              </div>
+                              <div class="form-group">
+                                <label for="ejemplo_password_1">Contraseña PAC</label>
+                                <div class="input-group">
+                                  <input type="password" class="form-control" id="fk_password" placeholder="Introduce tu Contraseña de PAC">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-password" type="button"><i id="i_password" class="fa fa-eye"></i></button>
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="ejemplo_password_1">Archivo CER</label>
+                                <div class="input-group input-file-cer" name="Fichier1">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-choose" type="button">CER</button>
+                                  </span>
+                                  <input type="text" class="form-control" id="csd_cer" placeholder='Selecciona el archivo .cer'/>
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-reset" type="button"><i class="fa fa-eraser"></i></button>
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="ejemplo_password_1">Archivo KEY</label>
+                                <div class="input-group input-file-key" name="Fichier1">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-choose" type="button">KEY</button>
+                                  </span>
+                                  <input type="text" class="form-control" id="csd_key" placeholder='Selecciona el archivo .key'/>
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-reset" type="button"><i class="fa fa-eraser"></i></button>
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="ejemplo_password_1">Contraseña CSD</label>
+                                <div class="input-group">
+                                  <input type="password" class="form-control" id="csd_password" placeholder="Introduce tu Contraseña de los CSD">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default btn-csd" type="button"><i id="i_csd" class="fa fa-eye"></i></button>
+                                  </span>
+                                </div>
+                              </div>
+                              <br>
+                              <div align="right" class="form-group">
+                                <button type="button" class="btn btn-primary btn_dfiscal">Guardar Cambios</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>  
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+    <div id="modal_csd" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 align="center"><strong>Agregar CSD</strong></h4s>
+          </div>
+          <div class="modal-body">
+            <form role="form">
+              {% csrf_token %} 
+              <div class="form-group">
+                <label for="Descripción">Descripción</label>
+                <input type="text" class="form-control" id="csd_descripcion" placeholder="Ingrese una Descripción"/>
+              </div>
+              <div class="form-group">
+                <div class="input-group input-file" name="Fichier1">
+                  <span class="input-group-btn">
+                      <button class="btn btn-default btn-choose" type="button">CER</button>
+                  </span>
+                  <input type="text" class="form-control" id="csds_cer" placeholder='Selecciona el archivo .cer'/>
+                  <span class="input-group-btn">
+                       <button class="btn btn-default btn-reset" type="button"><i class="fa fa-eraser"></i></button>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group input-file2" name="Fichier1">
+                  <span class="input-group-btn">
+                      <button class="btn btn-default btn-choose" type="button">KEY</button>
+                  </span>
+                  <input type="text" class="form-control" id="csds_key" placeholder='Selecciona el archivo .key'/>
+                  <span class="input-group-btn">
+                       <button class="btn btn-default btn-reset" type="button"><i class="fa fa-eraser"></i></button>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" id="csd_passwords" placeholder="Ingrese la contraseña de los CSD"/>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary send-csd" title="Agregar CSD">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="modal_confirm">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 align="center" class="modal-title" option="" id="modalconfirm">Mensaje de Confirmación</h>
+          </div>
+          <div class="modal-body">
+          <h4 align="center" style="color:black;">¿Deseas continuar con el proceso?</h4>
+          </div>  
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" id="btn_confirm">Si</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+

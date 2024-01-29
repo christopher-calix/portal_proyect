@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from django.conf import settings
+from .headers import  *
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,16 +28,18 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_authtoken',
    
 ]
 
 
-
-
 LOCAL_APPS = [
     
-     'Apps.nomina_app',
+    'Apps.nomina_app',
     'Apps.users',
+    'Apps.services',
 
 ]
 
@@ -47,6 +50,18 @@ LOCAL_APPS = [
 #)
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS 
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+       'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+      'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
 
 
 MIDDLEWARE = [
@@ -165,25 +180,32 @@ STATIC_URL = 'static/'
 
 STATIC_URL_USERS =  'static/users/images/'
 
-TEMPORARY_QR = os.path.join(BASE_DIR + STATIC_URL, 'temporary')
-if not os.path.exists(TEMPORARY_QR):
-    os.mkdir(TEMPORARY_QR)
-    
-STATICFILES_DIRS = (
-  BASE_DIR.child('static'),
-  TEMPORARY_QR
-  )
 
+TEMPORARY_QR = os.path.join(BASE_DIR, STATIC_URL, 'temporary')
+
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "TEMPORARY_QR",
+]
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/secure'
 
 
 
-
+MEDIA_ROOT = '/tmp/media/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
 
+# STATIC_DIRS = (
+#     '/tmp/'
+# )
+
+AUTH_USER_MODEL = 'users.Profile'
+
+FIXTURE_DIRS = (
+  'fixtures/',
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -193,6 +215,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 """
 Additional Data
 """
+
+
+
+
+
+
+''' el smtp es 10.0.3.12
+user: proveedor
+passw: g2dMRg99wauf'''
+FK_UTILITIES_URL = 'https://demo-facturacion.finkok.com/servicios/soap/utilities.wsdl'
+FK_REGISTRATION_URL = "https://demo-facturacion.finkok.com/servicios/soap/registration.wsdl"
+NOTIFICATION_ADD_BUSINESS_EMAILS = ["tigreac96@gmail.com"]
+
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
@@ -210,13 +246,29 @@ FK_USERNAME = 'finkok_test@alfredo.com'
 FK_PASSWORD = 'f1nk0K#17'
 FK_NO_CER = '20001000000300022762'
 
-''' el smtp es 10.0.3.12
-user: proveedor
-passw: g2dMRg99wauf'''
-FK_UTILITIES_URL = 'https://demo-facturacion.finkok.com/servicios/soap/utilities.wsdl'
-FK_REGISTRATION_URL = "https://demo-facturacion.finkok.com/servicios/soap/registration.wsdl"
-NOTIFICATION_ADD_BUSINESS_EMAILS = ["tigreac96@gmail.com"]
 
+
+DEFAULT_FROM_EMAIL = 'soporte@finkok.com'
+
+ACCOUNT_ACTIVATION_DAYS = 7
+
+CERTIFICATE_STORAGE = Path(BASE_DIR, 'cfdi', 'sat_certificados')
+
+INVOICE_STORAGE = Path(BASE_DIR, 'tmp/')
+
+
+INVOICE_STORAGE = Path(BASE_DIR, '/var/')
+SIGNED_STORAGE = Path(BASE_DIR, '/var/')
+
+if DEBUG:
+  INVOICE_STORAGE = Path('/tmp/')
+  SIGNED_STORAGE = Path('/tmp/')
+
+SESSION_COOKIE_AGE = 1500000
+
+VALIDATE_CFDI = False
+USERNAME_FK = 'ccalix@finkok.com.mx'
+PASSWORD_FK = 'Legoland1953!'
 
 
 
@@ -242,3 +294,23 @@ VALIDATE_CFDI = False
 
 USERNAME_FK = 'ccalix@finkok.com.mx'
 PASSWORD_FK = 'Legoland1953!'
+
+
+
+####################33
+
+CFDI_VERSION_32 = '3.2'
+CFDI_VERSION_33 = '3.3'
+XSD_NAME_32 = 'cfdv32.xsd'
+XSD_NAME_33 = 'cfdv33.xsd'
+XSLT_NAME_32 = 'cadenaoriginal_3_2.xslt'
+XSLT_NAME_33 = 'cadenaoriginal_3_3.xslt'
+
+LAST_VERIFICATION_DATE = 10 # MINUTES
+
+#cloudinary.config( 
+#  cloud_name = "dtarr1v4t", 
+#  api_key = "171591724155349", 
+#  api_secret = "SjIwDdz5IinAcFvFeQHt0n7IT9o" 
+#)
+#  

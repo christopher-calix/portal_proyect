@@ -1,0 +1,56 @@
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="update_user_employee" id="update_user_employee" data-backdrop="static" data-keyboard="false">
+
+  <div class="modal-dialog" role="document">
+        
+    <div class="modal-content">
+    <form id="form_edit_user_employee" name="form_edit_user_employee" autocomplete="off" novalidate>
+      <div class="modal-header text-center">
+        <h4 class="modal-title" id="gridSystemModalLabel"><b>Actualiza tu información</b></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12 text-center">
+            <div class="alert alert-info" role="alert">
+              <strong>Importante:</strong> La contraseñá debe cumplir con lo siguiente:
+              <ul>
+                <li>* Debe contener al menos 8 caracteres</li>
+                <li>* Debe contener al menos una letra minuscula</li>
+                <li>* Debe contener al menos una letra mayuscula</li>
+                <li>* Debe contener al menos un numero</li>
+                <li>* Debe contener al menos un carácter especial</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <dl class="col-sm-12">
+            <label><b>* Correo Electronico</b></label>
+            <input type='text' class="form-control" autocomplete="off" value="" placeholder="Correo Electronico" id="email_update_user_employee" required/>
+            <small id="email_update_user_employee_help" class="form-text text-danger"></small>
+          </dl>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <dt>* Contraseña</dt>
+            <dd class="fields">
+              <input type='password' class="form-control" autocomplete="off" value="" placeholder="Contraseña" id="password_update_user_employee" required/>
+              <small id="password_update_user_employee_help" class="form-text text-danger"></small>
+            </dd>        
+          </div>
+          <div class="col-sm-6">
+            <dt>* Repetir Contraseña</dt>
+            <dd class="fields">
+              <input type='password' class="form-control" autocomplete="off" value="" placeholder="Repetir contraseña" id="password2_update_user_employee" required/>
+              <small id="password2_update_user_employee_help" class="form-text text-danger"></small>
+            </dd>        
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id='update_user_employee_button' class="btn btn-primary btn-block"><b>Actualizar</b></button>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -13,13 +13,13 @@ STATUS_DICC = {
   'C':'La factura ha sido cancelada, verifique con la persona o entidad que emitio la factura',
   }
 INVOICE_STATUS = {
-  'N': u'En proceso de validacion', 
-  'R': u'Rechazado',
-  'V': u'Válido', 
-  'P': u'Por confirmar pago', 
-  'E': u'Pendiente de pago', 
-  'F': u'Pagado',
-  'C': u'Comprobante Cancelado',
+  'N': 'En proceso de validacion', 
+  'R': 'Rechazado',
+  'V': 'Válido', 
+  'P': 'Por confirmar pago', 
+  'E': 'Pendiente de pago', 
+  'F': 'Pagado',
+  'C': 'Comprobante Cancelado',
   #'A': u'Todos'
 }
 
