@@ -73,13 +73,13 @@ def index(request):
 #        return super().dispatch(request, *args, **kwargs)
 
 class LoginView(View):
-    http_method_names = ['POST']
 
     def post(self, request):
         
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        print(username, password)
         # Validate input
         if not username or not password:
             return JsonResponse({'success': False, 'message': 'Please provide both username and password.'})
@@ -89,17 +89,13 @@ class LoginView(View):
             if user is not None:
                 if user.is_active:
                     auth_login(request, user)
-                    if user.is_superuser and user.role == 'A':  # Combine checks for clarity
-                        return redirect('dashboard/users')
-                    elif user.role in ('A', 'S', 'B', 'E'):
-                        return redirect('dashboard/')
-                    else:
-                        return JsonResponse({'success': False, 'message': 'Invalid user role.'})
+                    return JsonResponse({'success': True, 'message': 'Invalid user role.'})
                 else:
                     return JsonResponse({'success': False, 'message': 'Inactive user.'})
             else:
                 return JsonResponse({'success': False, 'message': 'Invalid username or password.'})
         except Exception as e:
+            print(str(e))
             return JsonResponse({'success': False, 'message': str(e)})
 
 

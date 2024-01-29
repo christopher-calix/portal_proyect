@@ -21,7 +21,7 @@ from .utils import CreatePDF
 from .cem.parser_nom import PARSER_NOM, PARSER_NOM_V4_PAE
 from .cem.utils import FinkokWS
 
-#from portal.celery import app
+from portal_nomina.celery import app
 from celery.utils.log import get_task_logger
 from zipfile import ZipFile
 from datetime import datetime
@@ -38,12 +38,12 @@ import json
 logger = get_task_logger(__name__)
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def test(a, b):
     return a + b
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def import_upload(upload_id=None):
     try:
         time.sleep(5)
@@ -95,7 +95,7 @@ def import_upload(upload_id=None):
             upload_id, str(e)))
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def process_txt(txt_path, upload_id):
     try:
 
@@ -294,7 +294,7 @@ def process_txt(txt_path, upload_id):
             upload_id, txt_path, str(e)))
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME, default_retry_delay=10, max_retries=5)
+@app.task( default_retry_delay=10, max_retries=5)
 def check_import_upload(upload_id):
     try:
 
@@ -353,7 +353,7 @@ def check_import_upload(upload_id):
         check_import_upload.retry(args=[upload_id])
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME, default_retry_delay=5, max_retries=5)
+@app.task( default_retry_delay=5, max_retries=5)
 def send_mail_payroll(payroll_id):
     try:
         payroll_obj = PayRoll.objects.get(id=payroll_id)
@@ -365,7 +365,7 @@ def send_mail_payroll(payroll_id):
         send_mail_payroll.retry(args=[payroll_id])
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def generate_report_payrolls(business_id=None, ids=None):
     try:
 
@@ -433,7 +433,7 @@ def generate_report_payrolls(business_id=None, ids=None):
         print(exc_type, fname, exc_tb.tb_lineno)
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def generate_report_payrolls_employee(employe_id=None, ids=None):
     try:
 
@@ -497,7 +497,7 @@ def generate_report_payrolls_employee(employe_id=None, ids=None):
         print('Error: {}'.format(str(e)))
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def create_zip_invoices(payroll_report_id=None, account_id=None, invoices_ids=None, role=None, split_path=False):
     """
         Funcion encargada de creae un zip de xmls:
@@ -672,7 +672,7 @@ def create_zip_invoices(payroll_report_id=None, account_id=None, invoices_ids=No
             payroll_report_obj.save()
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME, default_retry_delay=3)
+@app.task( default_retry_delay=3)
 def create_zip_invoices_pdf(payroll_report_id=None):
     """
         Funcion encargada de crear un solo archivo PDF con varias nominas:
@@ -810,7 +810,7 @@ url = "https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?
 client = suds_client(url, location=url, cache=None)
 
 
-@app.task(queue=settings.CELERY_QUEUE_NAME)
+@app.task()
 def consulta_sat(invoice_id):
     invoice = PayRoll.objects.get(id=invoice_id)
     result = client.service.Consulta(invoice.get_satquery_str())

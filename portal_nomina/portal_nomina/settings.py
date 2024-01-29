@@ -30,7 +30,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_authtoken',
+    #'rest_authtoken',
    
 ]
 
@@ -201,7 +201,7 @@ MEDIA_URL = '/media/'
 #     '/tmp/'
 # )
 
-AUTH_USER_MODEL = 'users.Profile'
+#AUTH_USER_MODEL = 'users.Profile'
 
 FIXTURE_DIRS = (
   'fixtures/',

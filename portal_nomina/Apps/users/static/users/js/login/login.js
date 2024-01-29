@@ -38,7 +38,7 @@ $(document).ready(function() {
         })
         .done(function(response) {
             if (response.success) {
-                window.location.replace(response.url);
+                window.location.replace("/");
             } else {
                 // Use a more modern toast library for consistent styling
                 toastr.error(response.message, 'Error');

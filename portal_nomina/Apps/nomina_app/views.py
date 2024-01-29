@@ -60,6 +60,7 @@ from .utils import *
 
 from .decorators import *
 
+from django.urls import reverse_lazy
 from lxml import etree
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
@@ -89,31 +90,33 @@ from suds.client import Client as suds_client
 
 from django.shortcuts import redirect
 from django.views import View
+from django.shortcuts import redirect
 
 
 
-@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(login_required(login_url='user:login'), name='dispatch')
 class Dashboard(View):
-    template_name = 'views/main_views/dashboard.html'
-
-    def get(self, request, *args, **kwargs):
-        extra_content = {}
     
+    template_name = 'views/main_views/dashboard.html'
+    
+    def get(self, request, *args, **kwargs):
+        
+        extra_content = {}
         if request.user.is_authenticated == True and request.user.profile.role == 'E':
             taxpayer_id = request.session.get('active_account', None)
             
             if not taxpayer_id:
-                taxpayer_id = request.user.profile.employee.taxpayer_id
+                taxpayer_id = request.user.employee.taxpayer_id
 
-        elif request.user.is_authenticated == True and request.user.profile.role == 'S':
-            return redirect('company/') 
+        elif request.user.is_authenticated == True and request.user.profile.role in ('S', 'A'):
+            return redirect(reverse_lazy('nomina_app:company')) 
 
         return render(request, self.template_name, extra_content)
      
 
      
      
-@method_decorator(login_required(login_url='/'), name='dispatch')     
+@method_decorator(login_required(login_url='user:login'), name='dispatch')     
 #pendiente el quer_get
 
 class Company(TemplateView):
@@ -1168,7 +1171,7 @@ class PDFView(TemplateView):
             print('Error al descargar PDF ==> %s' % str(e))
             raise Http404
 
-@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(login_required(login_url='user:login'), name='dispatch')
 class TxtView(TemplateView):
 
     def get(self, request, payroll_id, *args, **kwargs):
@@ -1184,7 +1187,7 @@ class TxtView(TemplateView):
             print('Error al descargar XML ==> %s' % str(e))
             raise Http404
 
-@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(login_required(login_url='user:login'), name='dispatch')
 class SendEmailView(TemplateView):
 
     def post(self, request, *args, **kwargs):
@@ -1370,7 +1373,7 @@ class DetailsHistoryView(TemplateView):
 from django.core.cache import cache
 class NotificationView(TemplateView):
 
-    @login_required(login_url='/')
+    @login_required(login_url='user:login')
     def get(self, request, *args, **kwargs):
         try:
             base_path = request.GET.get('base_path')
@@ -1707,7 +1710,7 @@ class GetCodeView(View):
         img.save(image_path)
         return image_path, settings.STATIC_URL('temporary/'+filename)
 
-@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(login_required(login_url='user:login'), name='dispatch')
 class TokenAddView(View):
     template_name = 'dashboard.html'
 
@@ -1956,7 +1959,7 @@ class ListZipsView(View):
         return JsonResponse(result)
       
 
-@method_decorator(login_required(login_url='/'), name='dispatch')
+@method_decorator(login_required(login_url='user:login'), name='dispatch')
 @method_decorator(require_http_methods(["GET"]), name='get')
 class DownloadZipView(View):
     def get(self, request, zip_id, *args, **kwargs):
