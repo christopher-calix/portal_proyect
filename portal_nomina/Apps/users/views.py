@@ -54,8 +54,8 @@ from django.utils.http import urlsafe_base64_encode
 
 from .forms.register import UserForm, ActivationForm
 
+from .models import Profile
 
-User = get_user_model()
 
 
 
@@ -227,7 +227,7 @@ class BackPassResetView(View):
             email = request.POST.get('email')
             
             try:
-                user = User.objects.get(email=email)
+                user = Pofile.objects.get(email=email)
                 user_id = user.id
                 string_id = str(user_id)
                 cod_id = base64.b64encode(string_id.encode()).decode('utf-8')
