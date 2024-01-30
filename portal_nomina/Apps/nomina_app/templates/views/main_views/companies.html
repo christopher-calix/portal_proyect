@@ -141,8 +141,8 @@
 
                     <div class="container-fluid">
 
-                          <form class="row g-2 needs-validation" novalidate>
-
+                          <form class="row g-2 needs-validation" id='add-cp' novalidate>
+                            {% csrf_token %}
                               <div class="col-m-5">
                                 <label for="validationCustomUsername" class="form-label">Raz&oacute;n Social</label>
                                 <div class="input-group has-validation">
