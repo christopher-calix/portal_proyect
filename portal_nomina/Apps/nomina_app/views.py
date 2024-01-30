@@ -97,10 +97,11 @@ from django.shortcuts import redirect
 @method_decorator(login_required(login_url='user:login'), name='dispatch')
 class Dashboard(View):
     
+    
     template_name = 'views/main_views/dashboard.html'
     
     def get(self, request, *args, **kwargs):
-        
+        #import pdb;set_trace();
         extra_content = {}
         if request.user.is_authenticated == True and request.user.profile.role == 'E':
             taxpayer_id = request.session.get('active_account', None)
@@ -108,10 +109,16 @@ class Dashboard(View):
             if not taxpayer_id:
                 taxpayer_id = request.user.employee.taxpayer_id
 
-        elif request.user.is_authenticated == True and request.user.profile.role in ('S', 'A'):
-            return redirect(reverse_lazy('nomina_app:company')) 
+        elif request.user.is_authenticated == True and request.user.profile.role in ('S'):
+            return redirect(reverse('nomina_app:company')) 
+        
+        elif request.user.is_authenticated == True and request.user.profile.role in ('A'):
 
-        return render(request, self.template_name, extra_content)
+            return render(request, self.template_name, extra_content)
+    
+    
+  
+
      
 
      

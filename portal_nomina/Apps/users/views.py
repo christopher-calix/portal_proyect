@@ -23,6 +23,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
@@ -102,24 +104,29 @@ class LoginView(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(FormView):
+    model=Account
     email_body_template_html = "registration/activation_email_html.txt"
     email_body_template_string = "registration/activation_email_string.txt"
     email_subject_template = "registration/activation_email_subject.txt"
     form_class = UserForm
-    success_url = reverse_lazy("dashboard")
-    template_name = "registration/register.html"
+    fields = '__all__'
+    success_url = reverse_lazy("nomina_app:dashboard")
+    template_name = "registration/registration_form.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.account = Account.objects.get(
-                taxpayer_id=kwargs.get('taxpayer_id'),
-                user__role__in=['A', 'F']
-            )
-            self.is_provider = True
-        except ObjectDoesNotExist:
-            self.account = None
-            self.is_provider = False
-        return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, *args, **kwargs):
+    #import pdb; pdb.set_trace()
+        """
+          Check that url is available before even bothering to
+          dispatch or do other processing.
+          """
+        #if kwargs.has_key('taxpayer_id'):
+        if 'taxpayer_id' in kwargs:
+          account_args = Q(taxpayer_id=kwargs['taxpayer_id'], user__role__in=['A', 'F'])
+          self.account = get_object_or_404(Account, account_args)
+          self.is_provider = True
+        else:
+          return super(RegistrationView, self).dispatch(*args, **kwargs)
+
 
     def form_valid(self, form):
         user = form.save(commit=False)
@@ -142,7 +149,7 @@ class RegistrationView(FormView):
         return self.success_url
 
     def send_activation_email(self, user):
-        activation_key = generate_activation_key(user)
+        activation_key = self.generate_activation_key(user)
         context = self.get_email_context(activation_key)
         subject = render_to_string(self.email_subject_template, context)
         subject = force_str(subject).strip()
@@ -227,7 +234,7 @@ class BackPassResetView(View):
             email = request.POST.get('email')
             
             try:
-                user = Pofile.objects.get(email=email)
+                user = Profile.objects.get(email=email)
                 user_id = user.id
                 string_id = str(user_id)
                 cod_id = base64.b64encode(string_id.encode()).decode('utf-8')
@@ -259,7 +266,7 @@ class BackPassResetView(View):
                     print(str(e))
                     message = 'Error al enviar correo, por favor intenta nuevamente'
             
-            except User.DoesNotExist:
+            except Profile.DoesNotExist:
                 message = 'Usuario no existente'
 
             response = {
@@ -290,7 +297,7 @@ class PasswordResetView(View):
                 password_confirmation = request.POST.get('password_confirmation')
                 
                 try:
-                    user = User.objects.get(id=user_id)
+                    user = Profile.objects.get(id=user_id)
                     if password == password_confirmation:
                         success_pass, message_pass = validate_password(password)
                         if success_pass:
@@ -301,7 +308,7 @@ class PasswordResetView(View):
                             message = message_pass
                     else:
                         message = 'Contraseñas no corresponden'
-                except User.DoesNotExist:
+                except Profile.DoesNotExist:
                     message = 'Usuario no existente'
 
                 response = {
@@ -339,7 +346,7 @@ class UpdatePasswordAndEmailView(View):
                 if not email:
                     raise Exception("El email es inválido")
 
-                user_filter = User.objects.filter(id=user_id)
+                user_filter = Profile.objects.filter(id=user_id)
                 if not user_filter.exists():
                     raise Exception("El usuario no existe en el sistema")
 
@@ -353,7 +360,7 @@ class UpdatePasswordAndEmailView(View):
                 except ValidationError as e:
                     raise Exception("Email es inválido")
 
-                if User.objects.filter(email=email).exists():
+                if Profile.objects.filter(email=email).exists():
                     raise Exception("El email ya existe, por favor registra otro")
 
                 if password != password2:

@@ -130,8 +130,80 @@
 
              <!--modal start ------------------------------------------------------------------------------------------------------------------------------------------> 
 
-             {% include "admin/modals/add_user.html" %}
-             {% include "admin/modals/edit_user.html" %}
+             <!-- Modal -->
+            <div class="modal fade" id="modal-add-user" role="dialog">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content" style="background: #fff;">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title header-modal">Agregar Usuario: </h4>
+                      </div>
+                      <div class="modal-body">
+                          <div class="row">
+                              <div class="col-sm-12 col-md-12">
+                                  <div class="well" id='general-info'>
+                                      <div class="row">
+                                          <div class="col-sm-6 info" id="user-username">
+                                              <strong>Usuario:</strong>
+                                              <input type="text" id="add_username" class="form-control" placeholder="e-mail" value="">
+                                              <small id="username_help" class="form-text text-danger"></small>
+                                          </div>
+                                          <div class="col-sm-6 info" id="user-type">
+                                              <strong>Tipo:</strong>
+                                              <select id="add_type" class="selectpicker" multipleeeee data-hide-disabled="true" data-live-search="true">
+                                                  <optgroup label="Tipo">
+                                                      <option value="S">Staff</option>
+                                                      <option value="A">Administrador</option>
+                                                  </optgroup>
+                                              </select>
+                                          </div>
+                                      </div>
+                                      <br>
+                                      <div class="row">
+                                          <div class="col-sm-12 info" id="user-first-name">
+                                              <strong>Nombre:</strong>
+                                              <input type="text" id="add_firstname" class="form-control" placeholder="Nombre" value="">
+                                              <small id="firstname_help" class="form-text text-danger"></small>
+                                          </div>
+                                      </div>
+                                      <br>
+                                      <div class="row">
+                                          <div class="col-sm-12 info" id="user-businesses">
+                                              <strong id="lbl_businesses" >Negocios:</strong>
+                                              <select id="add_businesses" class="selectpicker form-control" multiple data-actions-box="true" data-hide-disabled="true" data-live-search="true">
+                                                  <optgroup label="Negocios">
+                                                      {% for b in business %}
+                                                          <option value="{{ b.id }}">{{ b.taxpayer_id }} - {{ b.name }}</option>
+                                                      {% endfor %}
+                                                  </optgroup>
+                                              </select>
+                                              <small id="businesses_help" class="form-text text-danger"></small>
+                                          </div>
+                                      </div>
+                                      <br>
+                                      <div class="row">
+                                          <div class="col-sm-6 info" id="user-pass-new">
+                                              <strong>Contraseña:</strong>
+                                              <input type="password" id="add_password" class="form-control" placeholder="Contraseña">
+                                              <small id="pass_help" class="form-text text-danger"></small>
+                                          </div>
+                                          <div class="col-sm-6 info" id="user-pass-new-conf">
+                                              <strong>Confirmar Contraseña:</strong>
+                                              <input type="password" id="add_password2" class="form-control" placeholder="Confirmar Contraseña">
+                                              <small id="pass2_help" class="form-text text-danger"></small>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                          <button type="button" class="btn btn-primary add" style="float: left;">Agregar</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
 
           <!----------------------  modal form end ---------------------------------------------------------------------------------------------------------------------------------------------------------->
 
