@@ -13,6 +13,10 @@
     <meta name="author" content="">
 
     <title>Portal Nomina | {% block title %}{% endblock %}</title>
+
+
+    <!-- Data table js ajax -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     
     <!-- Custom fonts for this template-->
     <link href="{% static 'nomina_app/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -375,6 +379,12 @@
         </div>
     </div>
 
+      
+    <!-- Datatable js  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'nomina_app/vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'nomina_app/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -407,7 +417,7 @@
     <!-- Sweet alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.2/dist/sweetalert2.all.min.js"></script>
     
-
+  
     
 
 </body>

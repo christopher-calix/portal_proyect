@@ -1,8 +1,10 @@
 {%extends 'base.html'%}
+{% load static %}
 
 
 
 {% block content %}
+
 <style>
 
   .icon-button {
@@ -16,6 +18,8 @@
 }
 
 </style>
+
+  
 
 
 <div class="row mt-3">
@@ -86,24 +90,6 @@
 
               <div class="row d-flex align-items-center mb-4 ">
 
-                <div class="col d-flex align-items-center justify-content-start ">
-
-                  <label class=" float-start mx-2 ">Mostrar</label>
-                      <div class="input-group" style="max-width: 80px;">                              
-                        <select class="form-select" id="inputGroupSelect01">
-                          <option selected="">10</option>
-                          <option value="1">25</option>
-                          <option value="2">50</option>
-                          <option value="3">100</option>
-                        </select>
-                      </div>
-                  <label class="mx-2 " >Entradas </label>
-                </div>
-
-                <div class="col">          
-                  <button class ="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="bi bi-building-fill-add"></i> Agregar </>
-                </div>
-                
 
                 
               </div><!--end class row-->
@@ -112,7 +98,7 @@
 
 
 
-            <table class="table table-striped table-bordered nowrap " id="users">
+            <table class="display table  table-striped table-bordered nowrap " id="users">
               <thead>
                 <tr>
                   <th>RFC</th>
@@ -141,7 +127,7 @@
 
                     <div class="container-fluid">
 
-                          <form class="row g-2 needs-validation" id='add-cp' novalidate>
+                          <form class="row g-2 needs-validation" id="add-cp" novalidate>
                             {% csrf_token %}
                               <div class="col-m-5">
                                 <label for="validationCustomUsername" class="form-label">Raz&oacute;n Social</label>
@@ -345,62 +331,14 @@
 
         </section>
     </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
 
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+   
+    <script src="{% static 'nomina_app/js/business/business.js' %}"></script>
 
-    <script>
-
-      // Example starter JavaScript for disabling form submissions if there are invalid fields
-(function () {
-  'use strict'
-
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  var forms = document.querySelectorAll('.needs-validation')
-
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
-
-
-
-//leading with the email sender while using inputs
-// Select the buttons and input fields
-const addEmailButton = document.getElementById("add-Email");
-const removeEmailButton = document.getElementById("remove-Email");
-const emailSenderInput = document.getElementById("email-sender");
-const emailReceiverInput = document.getElementById("email-reciever");
-
-// Add event listeners to the buttons
-addEmailButton.addEventListener("click", function() {
-  const emailToAdd = emailSenderInput.value.trim(); // Get email from sender input
-
-  if (emailToAdd) {
-    // Append email to receiver input, handling existing emails
-    if (emailReceiverInput.value) {
-      emailReceiverInput.value += ", " + emailToAdd;
-    } else {
-      emailReceiverInput.value = emailToAdd;
-    }
-
-    emailSenderInput.value = ""; // Clear sender input
-  }
-});
-
-removeEmailButton.addEventListener("click", function() {
-  emailReceiverInput.value = ""; // Clear receiver input
-});
-
-    </script>
 </div>
   
 
